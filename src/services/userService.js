@@ -15,7 +15,9 @@ let handleDangnhap = (username, password) => {
         let khachhang = await db.khachhangs.findOne({
           //get duoc alldata user
           attributes: ["Taikhoan_Kh", "Matkhau_KH"], //get data can thiet
-          where: { Taikhoan_Kh: username },
+          where: {
+            Taikhoan_Kh: username
+          },
           raw: true,
         });
         if (khachhang) {
@@ -111,7 +113,16 @@ let handleDangky = (data) => {
 };
 
 let handleDatve = (data) => {
-
+  // interface DSDichVu {
+  //   id: number,
+  //   ten: string,
+  //   anhminhhoa: string,
+  //   loai: string,
+  //   mota: string,
+  //   gia: number,
+  //   size: string,
+  //   sl: number
+  // }
   return new Promise(async (resovle, reject) => {
     try {
       if (
@@ -125,9 +136,9 @@ let handleDatve = (data) => {
         !data.id_suatchieu ||
         !data.id_rap ||
         !data.id_cumrap ||
-        !data.id_KM ||
+        // !data.id_KM ||
         !data.id_NV ||
-        !data.id_doan ||
+        // !data.id_doan ||
         !data.id_chieu
       ) {
         resovle({
@@ -135,7 +146,7 @@ let handleDatve = (data) => {
           errMessage: "Missing parameter",
         });
       } else {
-        // let n_id
+
         await db.ves.create({
           // id_KH: 5,
           Hten_KH: data.hten_KH,
@@ -149,15 +160,26 @@ let handleDatve = (data) => {
           id_rap: data.id_rap,
           id_cumrap: data.id_cumrap,
           id_KM: data.id_KM,
-          id_NV: data.id_NV
+          id_NV: data.id_NV,
           // id_DA: data.id_doan
         });
         let n_id = await db.ves.max('id'); // 40
-        for (let index = 0; index < data.soluongghe; index++) {
+        for (let index1 = 0; index1 < data.soluongghe; index1++) {
           await db.chitietves.create({
-            id_ve: n_id + 1,
-            id_ghe: data.id_ghe[index]
+            id_ve: n_id,
+            id_ghe: data.id_ghe[index1]
           });
+        }
+        // console.log("ádas",data.id_doan.length)
+        for (let index2 = 0; index2 < data.id_doan.length; index2++) {
+          if ( data.id_doan[index2].sl > 0) {
+            await db.chitietdoans.create({
+              slda: data.id_doan[index2].sl,
+              id_doan: data.id_doan[index2].id,
+              id_ve: n_id
+              // id_ghe: data.id_ghe[index2]
+            });
+          }
         }
         resovle({
           errCode: 0,
@@ -180,13 +202,14 @@ let handleTTchitietve = (id_ve) => {
     try {
       let chitietve = "";
       if (id_ve === "ALL") {
-        chitietve = await db.chitietves.findAll({
-        });
+        chitietve = await db.chitietves.findAll({});
       }
 
       if (id_ve && id_ve !== "ALL") {
         chitietve = await db.chitietves.findAll({
-          where: { id_Ve: id_ve },
+          where: {
+            id_Ve: id_ve
+          },
         });
       }
       resolve(chitietve);
@@ -201,13 +224,14 @@ let handleTTGhe = (key) => {
     try {
       let ghe = "";
       if (key === "ALL") {
-        ghe = await db.ghes.findAll({
-        });
+        ghe = await db.ghes.findAll({});
       }
 
       if (key && key !== "ALL") {
         ghe = await db.ghes.findAll({
-          where: { id: key },
+          where: {
+            id: key
+          },
         });
       }
       resolve(ghe);
@@ -222,13 +246,14 @@ let handleTTGhe_idrap = (key) => {
     try {
       let ghe = "";
       if (key === "ALL") {
-        ghe = await db.ghes.findAll({
-        });
+        ghe = await db.ghes.findAll({});
       }
 
       if (key && key !== "ALL") {
         ghe = await db.ghes.findAll({
-          where: { id_rap: key },
+          where: {
+            id_rap: key
+          },
         });
       }
       resolve(ghe);
@@ -246,12 +271,14 @@ let handleTTChieu = (ngaychieu, id_phim, id_rap) => {
       let ttchieu = "";
       if (ngaychieu && id_phim && id_rap) {
         if (ngaychieu === 'ALL' && id_phim === 'ALL' && id_rap === 'ALL') {
+          ttchieu = await db.chieus.findAll({});
+        } else {
           ttchieu = await db.chieus.findAll({
-          });
-        }
-        else {
-          ttchieu = await db.chieus.findAll({
-            where: { ngaychieu: ngaychieu, id_phim: id_phim, id_rap: id_rap },
+            where: {
+              ngaychieu: ngaychieu,
+              id_phim: id_phim,
+              id_rap: id_rap
+            },
           });
         }
 
@@ -269,13 +296,14 @@ let handleTTDoan = (key) => {
     try {
       let doan = "";
       if (key === "ALL") {
-        doan = await db.doans.findAll({
-        });
+        doan = await db.doans.findAll({});
       }
 
       if (key && key !== "ALL") {
         doan = await db.doans.findAll({
-          where: { id: key },
+          where: {
+            id: key
+          },
         });
       }
       resolve(doan);
@@ -289,13 +317,14 @@ let handleTTPhim = (key) => {
     try {
       let phim = "";
       if (key === "ALL") {
-        phim = await db.phims.findAll({
-        });
+        phim = await db.phims.findAll({});
       }
 
       if (key && key !== "ALL") {
         phim = await db.phims.findAll({
-          where: { id: key },
+          where: {
+            id: key
+          },
         });
       }
       resolve(phim);
@@ -312,13 +341,14 @@ let handleTTKM = (key) => {
     try {
       let khuyenmai = "";
       if (key === "ALL") {
-        khuyenmai = await db.khuyenmais.findAll({
-        });
+        khuyenmai = await db.khuyenmais.findAll({});
       }
 
       if (key && key !== "ALL") {
         khuyenmai = await db.khuyenmais.findAll({
-          where: { id: key },
+          where: {
+            id: key
+          },
         });
       }
       resolve(khuyenmai);
@@ -431,13 +461,14 @@ let handleTTCumrap = (key) => {
     try {
       let cumrap = "";
       if (key === "ALL") {
-        cumrap = await db.qlcumraps.findAll({
-        });
+        cumrap = await db.qlcumraps.findAll({});
       }
 
       if (key && key !== "ALL") {
         cumrap = await db.qlcumraps.findAll({
-          where: { id: key },
+          where: {
+            id: key
+          },
         });
       }
       resolve(cumrap);
@@ -452,13 +483,14 @@ let handleTTSuatchieu = (key) => {
     try {
       let suatchieu = "";
       if (key === "ALL") {
-        suatchieu = await db.suatchieus.findAll({
-        });
+        suatchieu = await db.suatchieus.findAll({});
       }
 
       if (key && key !== "ALL") {
         suatchieu = await db.suatchieus.findAll({
-          where: { id: key },
+          where: {
+            id: key
+          },
         });
       }
       resolve(suatchieu);
@@ -473,13 +505,14 @@ let handleTTRap_idcumrap = (key) => {
     try {
       let rap = "";
       if (key === "ALL") {
-        rap = await db.raps.findAll({
-        });
+        rap = await db.raps.findAll({});
       }
 
       if (key && key !== "ALL") {
         rap = await db.raps.findAll({
-          where: { id_cumrap: key },
+          where: {
+            id_cumrap: key
+          },
         });
       }
       resolve(rap);
@@ -494,13 +527,14 @@ let handleTTLoaiphim = (id) => {
     try {
       let loaiphim = "";
       if (id === "ALL") {
-        loaiphim = await db.loaiphims.findAll({
-        });
+        loaiphim = await db.loaiphims.findAll({});
       }
 
       if (id && id !== "ALL") {
         loaiphim = await db.loaiphims.findAll({
-          where: { id: id },
+          where: {
+            id: id
+          },
         });
       }
       resolve(loaiphim);
@@ -515,13 +549,14 @@ let handleLayTTCTLoaiphim_idP = (id) => {
     try {
       let chitietloaiphim = "";
       if (id === "ALL") {
-        chitietloaiphim = await db.chitietloaiphims.findAll({
-        });
+        chitietloaiphim = await db.chitietloaiphims.findAll({});
       }
 
       if (id && id !== "ALL") {
         chitietloaiphim = await db.chitietloaiphims.findAll({
-          where: { id_phim: id },
+          where: {
+            id_phim: id
+          },
         });
       }
       resolve(chitietloaiphim);
@@ -536,13 +571,14 @@ let handleTTVe_idchieu = (id_chieu) => {
     try {
       let ve = "";
       if (id_chieu === "ALL") {
-        ve = await db.ves.findAll({
-        });
+        ve = await db.ves.findAll({});
       }
 
       if (id_chieu && id_chieu !== "ALL") {
         ve = await db.ves.findAll({
-          where: { id_chieu: id_chieu },
+          where: {
+            id_chieu: id_chieu
+          },
         });
       }
       resolve(ve);
@@ -577,8 +613,7 @@ let handleThemTTCumrap = (data) => {
             ten_tttt: data.tentttt,
             diachi: data.diachi,
           });
-        }
-        else {
+        } else {
           resovle({
             errCode: 1,
             errMessage: "Thông tin cụm rạp đã tồn tại",
@@ -619,8 +654,7 @@ let handleSuaTTCumrap = (data) => {
           cumrap.ten_tttt = data.tentttt;
           cumrap.diachi = data.diachi;
           await cumrap.save();
-        }
-        else {
+        } else {
           resovle({
             errCode: 1,
             errMessage: "Cập nhật thông tin cụm rạp mới KHÔNG thành thông",
@@ -641,7 +675,9 @@ let handleSuaTTCumrap = (data) => {
 let handleXoaTTCumrap = async (Id) => {
   return new Promise(async (resolve, reject) => {
     let cumrap = await db.qlcumraps.findOne({
-      where: { id: Id },
+      where: {
+        id: Id
+      },
     });
 
     if (!cumrap) {
@@ -652,7 +688,9 @@ let handleXoaTTCumrap = async (Id) => {
     }
 
     await db.qlcumraps.destroy({
-      where: { id: Id },
+      where: {
+        id: Id
+      },
     });
 
     resolve({
@@ -691,8 +729,7 @@ let handleThemTTRap = (data) => {
             slghe: data.slg,
             id_cumrap: data.id_cr
           });
-        }
-        else {
+        } else {
           resovle({
             errCode: 1,
             errMessage: "Thông tin rạp đã tồn tại",
@@ -737,8 +774,7 @@ let handleSuaTTRap = (data) => {
           rap.id_cumrap = data.id_cr;
 
           await rap.save();
-        }
-        else {
+        } else {
           resovle({
             errCode: 1,
             errMessage: "Cập nhật thông tin rạp mới KHÔNG thành thông",
@@ -758,7 +794,9 @@ let handleSuaTTRap = (data) => {
 let handleXoaTTRap = async (Id) => {
   return new Promise(async (resolve, reject) => {
     let rap = await db.raps.findOne({
-      where: { id: Id },
+      where: {
+        id: Id
+      },
     });
 
     if (!rap) {
@@ -769,7 +807,9 @@ let handleXoaTTRap = async (Id) => {
     }
 
     await db.raps.destroy({
-      where: { id: Id },
+      where: {
+        id: Id
+      },
     });
 
     resolve({
@@ -808,8 +848,7 @@ let handleThemTTGhe = (data) => {
             loaiGhe: data.loaighe,
             id_rap: data.idr
           });
-        }
-        else {
+        } else {
           resovle({
             errCode: 1,
             errMessage: "Thông tin ghế đã tồn tại",
@@ -854,8 +893,7 @@ let handleSuaTTGhe = (data) => {
           ghe.id_rap = data.idr;
 
           await ghe.save();
-        }
-        else {
+        } else {
           resovle({
             errCode: 1,
             errMessage: "Cập nhật thông tin ghế mới KHÔNG thành thông",
@@ -875,7 +913,9 @@ let handleSuaTTGhe = (data) => {
 let handleXoaTTGhe = async (Id) => {
   return new Promise(async (resolve, reject) => {
     let ghe = await db.ghes.findOne({
-      where: { id: Id },
+      where: {
+        id: Id
+      },
     });
 
     if (!ghe) {
@@ -886,7 +926,9 @@ let handleXoaTTGhe = async (Id) => {
     }
 
     await db.ghes.destroy({
-      where: { id: Id },
+      where: {
+        id: Id
+      },
     });
 
     resolve({
@@ -983,8 +1025,7 @@ let handleSuaTTPhim = (data) => {
           ghe.id_rap = data.idr;
 
           await ghe.save();
-        }
-        else {
+        } else {
           resovle({
             errCode: 1,
             errMessage: "Cập nhật thông tin ghế mới KHÔNG thành thông",
@@ -1004,7 +1045,9 @@ let handleSuaTTPhim = (data) => {
 let handleXoaTTPhim = async (Id) => {
   return new Promise(async (resolve, reject) => {
     let ghe = await db.ghes.findOne({
-      where: { id: Id },
+      where: {
+        id: Id
+      },
     });
 
     if (!ghe) {
@@ -1015,7 +1058,9 @@ let handleXoaTTPhim = async (Id) => {
     }
 
     await db.ghes.destroy({
-      where: { id: Id },
+      where: {
+        id: Id
+      },
     });
 
     resolve({
@@ -1082,8 +1127,7 @@ let handleSuaTTLoaiphim = (data) => {
         if (loaiphim) {
           loaiphim.tenloai = data.tenloai
           await loaiphim.save();
-        }
-        else {
+        } else {
           resovle({
             errCode: 1,
             errMessage: "Cập nhật thông tin loại phim mới KHÔNG thành thông",
@@ -1103,7 +1147,9 @@ let handleSuaTTLoaiphim = (data) => {
 let handleXoaTTLoaiphim = async (Id) => {
   return new Promise(async (resolve, reject) => {
     let loaiphim = await db.loaiphims.findOne({
-      where: { id: Id },
+      where: {
+        id: Id
+      },
     });
 
     if (!loaiphim) {
@@ -1114,7 +1160,9 @@ let handleXoaTTLoaiphim = async (Id) => {
     }
 
     await db.loaiphims.destroy({
-      where: { id: Id },
+      where: {
+        id: Id
+      },
     });
 
     resolve({
@@ -1186,8 +1234,7 @@ let handleSuaTTSuatchieu = (data) => {
           suatchieu.giobatdau = data.giobd;
           suatchieu.gioketthuc = data.giokt;
           await suatchieu.save();
-        }
-        else {
+        } else {
           resovle({
             errCode: 1,
             errMessage: "Cập nhật thông tin suất chiếu KHÔNG thành thông",
@@ -1207,7 +1254,9 @@ let handleSuaTTSuatchieu = (data) => {
 let handleXoaTTSuatchieu = async (Id) => {
   return new Promise(async (resolve, reject) => {
     let suatchieu = await db.suatchieus.findOne({
-      where: { id: Id },
+      where: {
+        id: Id
+      },
     });
 
     if (!suatchieu) {
@@ -1218,7 +1267,9 @@ let handleXoaTTSuatchieu = async (Id) => {
     }
 
     await db.suatchieus.destroy({
-      where: { id: Id },
+      where: {
+        id: Id
+      },
     });
 
     resolve({
@@ -1301,8 +1352,7 @@ let handleSuaTTChieu = (data) => {
           chieu.id_suatchieu = data.idsc;
           chieu.id_phim = data.idp;
           await chieu.save();
-        }
-        else {
+        } else {
           resovle({
             errCode: 1,
             errMessage: "Cập nhật thông tin chiếu KHÔNG thành thông",
@@ -1322,7 +1372,9 @@ let handleSuaTTChieu = (data) => {
 let handleXoaTTChieu = async (Id) => {
   return new Promise(async (resolve, reject) => {
     let chieu = await db.chieus.findOne({
-      where: { id: Id },
+      where: {
+        id: Id
+      },
     });
 
     if (!chieu) {
@@ -1333,7 +1385,9 @@ let handleXoaTTChieu = async (Id) => {
     }
 
     await db.chieus.destroy({
-      where: { id: Id },
+      where: {
+        id: Id
+      },
     });
 
     resolve({
@@ -1418,8 +1472,7 @@ let handleSuaTTDoan = (data) => {
           doan.mota = data.Gia;
           doan.size = data.Size;
           await doan.save();
-        }
-        else {
+        } else {
           resovle({
             errCode: 1,
             errMessage: "Cập nhật thông tin doan KHÔNG thành thông",
@@ -1439,7 +1492,9 @@ let handleSuaTTDoan = (data) => {
 let handleXoaTTDoan = async (Id) => {
   return new Promise(async (resolve, reject) => {
     let doan = await db.doans.findOne({
-      where: { id: Id },
+      where: {
+        id: Id
+      },
     });
 
     if (!doan) {
@@ -1450,7 +1505,9 @@ let handleXoaTTDoan = async (Id) => {
     }
 
     await db.doans.destroy({
-      where: { id: Id },
+      where: {
+        id: Id
+      },
     });
 
     resolve({
@@ -1465,13 +1522,14 @@ let handleLayTTKhachhang = (key) => {
     try {
       let khachhang = "";
       if (key === "ALL") {
-        khachhang = await db.khachhangs.findAll({
-        });
+        khachhang = await db.khachhangs.findAll({});
       }
 
       if (key && key !== "ALL") {
         khachhang = await db.khachhangs.findAll({
-          where: { Taikhoan_KH: key },
+          where: {
+            Taikhoan_KH: key
+          },
         });
       }
       resolve(khachhang);
@@ -1559,8 +1617,7 @@ let handleSuaTTKhuyenmai = (data) => {
           khuyenmai.thoigianketthuc = data.thoigianketthuc;
 
           await khuyenmai.save();
-        }
-        else {
+        } else {
           resovle({
             errCode: 1,
             errMessage: "Cập nhật thông tin khuyenmai KHÔNG thành thông",
@@ -1580,7 +1637,9 @@ let handleSuaTTKhuyenmai = (data) => {
 let handleXoaTTKhuyenmai = async (Id) => {
   return new Promise(async (resolve, reject) => {
     let khuyenmai = await db.khuyenmais.findOne({
-      where: { id: Id },
+      where: {
+        id: Id
+      },
     });
 
     if (!khuyenmai) {
@@ -1591,7 +1650,9 @@ let handleXoaTTKhuyenmai = async (Id) => {
     }
 
     await db.khuyenmais.destroy({
-      where: { id: Id },
+      where: {
+        id: Id
+      },
     });
 
     resolve({
@@ -1607,13 +1668,14 @@ let handleLayTTNhanvien = (key) => {
     try {
       let nhanvien = "";
       if (key === "ALL") {
-        nhanvien = await db.nhanviens.findAll({
-        });
+        nhanvien = await db.nhanviens.findAll({});
       }
 
       if (key && key !== "ALL") {
         nhanvien = await db.nhanviens.findAll({
-          where: { Taikhoan_NV: key },
+          where: {
+            Taikhoan_NV: key
+          },
         });
       }
       resolve(nhanvien);
@@ -1707,19 +1769,18 @@ let handleSuaTTNhanvien = (data) => {
         });
         if (nhanvien) {
           nhanvien.Hten_NV = data.hten_nv;
-            nhanvien.Sdt_NV = data.sdt_nv;
-            nhanvien.Ngaysinh_NV = data.ngaysinh_nv;
-            nhanvien.Tuoi_NV = data.tuoi_nv;
-            nhanvien.Diachi_NV = data.diachi_nv;
-            nhanvien.Gioitinh_NV = data.gioitinh_nv;
-            nhanvien.Cccd_NV = data.cccd_nv;
-            nhanvien.Chucvu_NV = data.chucvu_nv;
-            nhanvien.Taikhoan_NV = data.taikhoan_nv;
-            nhanvien.Matkhau_NV = data.matkhau_nv;
+          nhanvien.Sdt_NV = data.sdt_nv;
+          nhanvien.Ngaysinh_NV = data.ngaysinh_nv;
+          nhanvien.Tuoi_NV = data.tuoi_nv;
+          nhanvien.Diachi_NV = data.diachi_nv;
+          nhanvien.Gioitinh_NV = data.gioitinh_nv;
+          nhanvien.Cccd_NV = data.cccd_nv;
+          nhanvien.Chucvu_NV = data.chucvu_nv;
+          nhanvien.Taikhoan_NV = data.taikhoan_nv;
+          nhanvien.Matkhau_NV = data.matkhau_nv;
 
-            await nhanvien.save();
-        }
-        else {
+          await nhanvien.save();
+        } else {
           resovle({
             errCode: 1,
             errMessage: "Cập nhật thông tin nhân viên KHÔNG thành thông",
@@ -1739,7 +1800,9 @@ let handleSuaTTNhanvien = (data) => {
 let handleXoaTTNhanvien = async (Id) => {
   return new Promise(async (resolve, reject) => {
     let nhanvien = await db.nhanviens.findOne({
-      where: { id: Id },
+      where: {
+        id: Id
+      },
     });
 
     if (!nhanvien) {
@@ -1750,7 +1813,9 @@ let handleXoaTTNhanvien = async (Id) => {
     }
 
     await db.nhanviens.destroy({
-      where: { id: Id },
+      where: {
+        id: Id
+      },
     });
 
     resolve({
@@ -1801,19 +1866,18 @@ let handleVnPay = (data) => {
         });
         if (nhanvien) {
           nhanvien.Hten_NV = data.hten_nv;
-            nhanvien.Sdt_NV = data.sdt_nv;
-            nhanvien.Ngaysinh_NV = data.ngaysinh_nv;
-            nhanvien.Tuoi_NV = data.tuoi_nv;
-            nhanvien.Diachi_NV = data.diachi_nv;
-            nhanvien.Gioitinh_NV = data.gioitinh_nv;
-            nhanvien.Cccd_NV = data.cccd_nv;
-            nhanvien.Chucvu_NV = data.chucvu_nv;
-            nhanvien.Taikhoan_NV = data.taikhoan_nv;
-            nhanvien.Matkhau_NV = data.matkhau_nv;
+          nhanvien.Sdt_NV = data.sdt_nv;
+          nhanvien.Ngaysinh_NV = data.ngaysinh_nv;
+          nhanvien.Tuoi_NV = data.tuoi_nv;
+          nhanvien.Diachi_NV = data.diachi_nv;
+          nhanvien.Gioitinh_NV = data.gioitinh_nv;
+          nhanvien.Cccd_NV = data.cccd_nv;
+          nhanvien.Chucvu_NV = data.chucvu_nv;
+          nhanvien.Taikhoan_NV = data.taikhoan_nv;
+          nhanvien.Matkhau_NV = data.matkhau_nv;
 
-            await nhanvien.save();
-        }
-        else {
+          await nhanvien.save();
+        } else {
           resovle({
             errCode: 1,
             errMessage: "Cập nhật thông tin nhân viên KHÔNG thành thông",
@@ -1880,7 +1944,7 @@ module.exports = {
   handleThemTTNhanvien: handleThemTTNhanvien,
   handleSuaTTNhanvien: handleSuaTTNhanvien,
   handleXoaTTNhanvien: handleXoaTTNhanvien,
-  handleVnPay:handleVnPay
+  handleVnPay: handleVnPay
 
 
 
