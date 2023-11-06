@@ -127,8 +127,8 @@ let handleDatve = (data) => {
         !data.id_cumrap ||
         !data.id_KM ||
         !data.id_NV ||
-        !data.id_chieu ||
-        !data.id_doan
+        !data.id_doan ||
+        !data.id_chieu
       ) {
         resovle({
           errCode: 1,
@@ -149,32 +149,16 @@ let handleDatve = (data) => {
           id_rap: data.id_rap,
           id_cumrap: data.id_cumrap,
           id_KM: data.id_KM,
-          id_NV: data.id_NV,
-          id_DA: data.id_doan
+          id_NV: data.id_NV
+          // id_DA: data.id_doan
         });
-
-        // let query = "SELECT MAX(salary) AS max_salary FROM publishers";
-        // let thongtinve = db.ves.findAll({
-        //   attributes: ['id']
-
-        //  });
-        //  console.log("ádas", db.ves.findAll({
-        //   attributes: ['id']
-
-        //  }))
-        //  console.log("id",id)
         let n_id = await db.ves.max('id'); // 40
-
-        // if (thongtinve) {
         for (let index = 0; index < data.soluongghe; index++) {
-
           await db.chitietves.create({
             id_ve: n_id + 1,
             id_ghe: data.id_ghe[index]
           });
         }
-        // }
-
         resovle({
           errCode: 0,
           errMessage: "Đặt vé thành công",

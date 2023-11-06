@@ -14,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
   chitietdoans.init(
     {
       slda: DataTypes.INTEGER,
+      id_ve: DataTypes.INTEGER,
       id_doan: DataTypes.INTEGER,
 
 

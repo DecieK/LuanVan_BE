@@ -45,10 +45,10 @@ module.exports = {
       id_NV: {
         type: Sequelize.INTEGER,
       },
-      id_DA: {
-        // allowNull: false,
-        type: Sequelize.INTEGER,
-      },
+      // id_DA: {
+      //   // allowNull: false,
+      //   type: Sequelize.INTEGER,
+      // },
 
       createdAt: {
         allowNull: false,

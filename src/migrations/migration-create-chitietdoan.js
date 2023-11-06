@@ -8,12 +8,16 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      slda: {
+      id_ve: {
         type: Sequelize.INTEGER,
       },
       id_doan: {
         type: Sequelize.INTEGER,
-      },    
+      }, 
+      slda: {
+        type: Sequelize.INTEGER,
+      },
+   
       
     
       createdAt: {
