@@ -74,11 +74,15 @@ const initWebRoutes = (app) => {
   router.delete("/api/XoaTTNhanvien", userController.handleXoaTTNhanvien);
 
 
+  router.get("/api/LayTTVe_idKH", userController.handleLayTTVe_idKH);
+  router.get("/api/LayTTRap", userController.handleLayTTRap);
+  router.get("/api/LayTTChieu_idc", userController.handleLayTTChieu_idc);
+  router.get("/api/LayTTDoan_idve", userController.handleLayTTDoan_idve);
 
 
 
 
-  router.post("/api/VnPay", userController.handleVnPay);
+  // router.post("/api/VnPay", userController.handleVnPay);
 
   return app.use("/", router);
 };

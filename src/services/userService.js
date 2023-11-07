@@ -172,7 +172,7 @@ let handleDatve = (data) => {
         }
         // console.log("ádas",data.id_doan.length)
         for (let index2 = 0; index2 < data.id_doan.length; index2++) {
-          if ( data.id_doan[index2].sl > 0) {
+          if (data.id_doan[index2].sl > 0) {
             await db.chitietdoans.create({
               slda: data.id_doan[index2].sl,
               id_doan: data.id_doan[index2].id,
@@ -1825,74 +1825,106 @@ let handleXoaTTNhanvien = async (Id) => {
   });
 };
 
-
-
-
-
-
-
-
-
-
-let handleVnPay = (data) => {
-
-  return new Promise(async (resovle, reject) => {
+let handleLayTTVe_idKH = (key) => {
+  return new Promise(async (resolve, reject) => {
     try {
-      if (
-        !data.hten_nv ||
-        !data.sdt_nv ||
-        !data.ngaysinh_nv ||
-        !data.tuoi_nv ||
-        !data.diachi_nv ||
-        !data.gioitinh_nv ||
-        !data.cccd_nv ||
-        !data.chucvu_nv ||
-        !data.taikhoan_nv ||
-        !data.matkhau_nv ||
-        !data.id
-        // 0 === 1
-      ) {
-        resovle({
-          errCode: 1,
-          errMessage: "Missing parameter nv",
-        });
-      } else {
+      let ve = "";
+      if (key === "ALL") {
+        ve = await db.ves.findAll({
 
-        let nhanvien = await db.nhanviens.findOne({
-          where: {
-            id: data.id
-          },
-          raw: false,
-        });
-        if (nhanvien) {
-          nhanvien.Hten_NV = data.hten_nv;
-          nhanvien.Sdt_NV = data.sdt_nv;
-          nhanvien.Ngaysinh_NV = data.ngaysinh_nv;
-          nhanvien.Tuoi_NV = data.tuoi_nv;
-          nhanvien.Diachi_NV = data.diachi_nv;
-          nhanvien.Gioitinh_NV = data.gioitinh_nv;
-          nhanvien.Cccd_NV = data.cccd_nv;
-          nhanvien.Chucvu_NV = data.chucvu_nv;
-          nhanvien.Taikhoan_NV = data.taikhoan_nv;
-          nhanvien.Matkhau_NV = data.matkhau_nv;
-
-          await nhanvien.save();
-        } else {
-          resovle({
-            errCode: 1,
-            errMessage: "Cập nhật thông tin nhân viên KHÔNG thành thông",
-          });
-        }
-        resovle({
-          errCode: 0,
-          errMessage: "Cập nhật thông tin nhân viên thành thông",
         });
       }
+
+      if (key && key !== "ALL") {
+        ve = await db.ves.findAll({
+          where: {
+            id_KH: key
+          },
+        });
+      }
+      resolve(ve);
     } catch (e) {
       reject(e);
     }
   });
 };
+let handleLayTTRap = (key) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let rap = "";
+      if (key === "ALL") {
+        rap = await db.raps.findAll({
+
+        });
+      }
+
+      if (key && key !== "ALL") {
+        rap = await db.raps.findAll({
+          where: {
+            id: key
+          },
+        });
+      }
+      resolve(rap);
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+let handleLayTTChieu_idc = (key) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let chieu = "";
+      if (key === "ALL") {
+        chieu = await db.chieus.findAll({
+
+        });
+      }
+
+      if (key && key !== "ALL") {
+        chieu = await db.chieus.findAll({
+          where: {
+            id: key
+          },
+        });
+      }
+      resolve(chieu);
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+let handleLayTTDoan_idve = (key) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let chitietdoan = "";
+      if (key === "ALL") {
+        chitietdoan = await db.chitietdoans.findAll({
+
+        });
+      }
+
+      if (key && key !== "ALL") {
+        chitietdoan = await db.chitietdoans.findAll({
+          where: {
+            id_ve: key
+          },
+        });
+      }
+      resolve(chitietdoan);
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
+
+
+
+
+
+
+
 module.exports = {
   handleDangnhap: handleDangnhap,
   handleDangky: handleDangky,
@@ -1944,7 +1976,12 @@ module.exports = {
   handleThemTTNhanvien: handleThemTTNhanvien,
   handleSuaTTNhanvien: handleSuaTTNhanvien,
   handleXoaTTNhanvien: handleXoaTTNhanvien,
-  handleVnPay: handleVnPay
+  handleLayTTVe_idKH: handleLayTTVe_idKH,
+  handleLayTTRap : handleLayTTRap,
+  handleLayTTChieu_idc: handleLayTTChieu_idc,
+  handleLayTTDoan_idve: handleLayTTDoan_idve
+
+
 
 
 

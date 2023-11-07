@@ -26,7 +26,6 @@ module.exports = {
       id_KH: {
         type: Sequelize.INTEGER,
       },
-
       id_suatchieu: {
         type: Sequelize.INTEGER,
       },
@@ -45,10 +44,10 @@ module.exports = {
       id_NV: {
         type: Sequelize.INTEGER,
       },
-      // id_DA: {
-      //   // allowNull: false,
-      //   type: Sequelize.INTEGER,
-      // },
+      maCode: {
+        // allowNull: false,
+        type: Sequelize.STRING,
+      },
 
       createdAt: {
         allowNull: false,

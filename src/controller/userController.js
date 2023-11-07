@@ -826,89 +826,96 @@ let handleXoaTTNhanvien = async (req, res) => {
 
 
 
+let handleLayTTVe_idKH = async (req, res) => {
+  let key = req.query.keyword;
 
+  if (!key) {
+    return res.status(200).json({
+      errCode: 1,
+      errMessage: "missing require parameters",
+      ves: {},
+    });
+  }
 
+  let ves = await userService.handleLayTTVe_idKH(key);
 
-
-
-
-
-
-
-
-
-
-let handleVnPay = async (req, res) => {
-  // try {
-  //   let vnpay = await userService.handleVnPay(req.body);
-  //   return res.status(200).json(vnpay);
-  // } catch (e) {
-  //   console.log(e);
-  //   return res.status(200).json({
-  //     errCode: -1,
-  //     errMessage: "Error from the server",
-  //   });
-  // }
-  // router.post('/create_payment_url', function (req, res, next) {
-    let ipAddr = req.headers['x-forwarded-for'] ||
-        req.connection.remoteAddress ||
-        req.socket.remoteAddress ||
-        req.connection.socket.remoteAddress;
-
-    let config = require('config');
-    let dateFormat = require('dateformat');
-
-
-    let tmnCode = 'DO4KCUCZ'
-    let secretKey = 'GXEXVMCPYVXIBPUAPVARKUCBKYJWSUAB'
-    let vnpUrl = config.get('vnp_Url');
-    let returnUrl = config.get('vnp_ReturnUrl');
-
-    let date = new Date();
-
-    let createDate = dateFormat(date, 'yyyymmddHHmmss');
-    let orderId = dateFormat(date, 'HHmmss'); //ma don hang
-    let amount = req.body.amount;
-    let bankCode = req.body.bankCode;
-
-    let orderInfo = req.body.orderDescription; 
-    let orderType = req.body.orderType;
-    let locale = req.body.language;
-    if (locale === null || locale === '') {
-        locale = 'vn';
-    }
-    let currCode = 'VND';
-    let vnp_Params = {};
-    vnp_Params['vnp_Version'] = '2.1.0';
-    vnp_Params['vnp_Command'] = 'pay';
-    vnp_Params['vnp_TmnCode'] = tmnCode;
-    // vnp_Params['vnp_Merchant'] = ''
-    vnp_Params['vnp_Locale'] = locale;
-    vnp_Params['vnp_CurrCode'] = currCode;
-    vnp_Params['vnp_TxnRef'] = orderId;
-    vnp_Params['vnp_OrderInfo'] = orderInfo;
-    vnp_Params['vnp_OrderType'] = orderType;
-    vnp_Params['vnp_Amount'] = amount * 100;
-    vnp_Params['vnp_ReturnUrl'] = returnUrl;
-    vnp_Params['vnp_IpAddr'] = ipAddr;
-    vnp_Params['vnp_CreateDate'] = createDate;
-    if (bankCode !== null && bankCode !== '') {
-        vnp_Params['vnp_BankCode'] = bankCode;
-    }
-
-    vnp_Params = sortObject(vnp_Params);
-
-    let querystring = require('qs');
-    let signData = querystring.stringify(vnp_Params, { encode: false });
-    let crypto = require("crypto");
-    let hmac = crypto.createHmac("sha512", secretKey);
-    let signed = hmac.update(new Buffer(signData, 'utf-8')).digest("hex");
-    vnp_Params['vnp_SecureHash'] = signed;
-    vnpUrl += '?' + querystring.stringify(vnp_Params, { encode: false });
-
-    res.redirect(vnpUrl)
-// });
+  return res.status(200).json({
+    errCode: 0,
+    errMessage: "ok",
+    ves,
+  });
 };
+
+let handleLayTTRap = async (req, res) => {
+  let key = req.query.keyword;
+
+  if (!key) {
+    return res.status(200).json({
+      errCode: 1,
+      errMessage: "missing require parameters",
+      raps: {},
+    });
+  }
+
+  let raps = await userService.handleLayTTRap(key);
+
+  return res.status(200).json({
+    errCode: 0,
+    errMessage: "ok",
+    raps,
+  });
+};
+let handleLayTTChieu_idc = async (req, res) => {
+  let key = req.query.keyword;
+
+  if (!key) {
+    return res.status(200).json({
+      errCode: 1,
+      errMessage: "missing require parameters",
+      chieus: {},
+    });
+  }
+
+  let chieus = await userService.handleLayTTChieu_idc(key);
+
+  return res.status(200).json({
+    errCode: 0,
+    errMessage: "ok",
+    chieus,
+  });
+};
+let handleLayTTDoan_idve = async (req, res) => {
+  let key = req.query.keyword;
+
+  if (!key) {
+    return res.status(200).json({
+      errCode: 1,
+      errMessage: "missing require parameters",
+      chitietdoans: {},
+    });
+  }
+
+  let chitietdoans = await userService.handleLayTTDoan_idve(key);
+
+  return res.status(200).json({
+    errCode: 0,
+    errMessage: "ok",
+    chitietdoans,
+  });
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
 module.exports = {
   handleDangnhap: handleDangnhap,
   handleDangky: handleDangky,
@@ -961,5 +968,8 @@ module.exports = {
   handleThemTTNhanvien: handleThemTTNhanvien,
   handleSuaTTNhanvien: handleSuaTTNhanvien,
   handleXoaTTNhanvien: handleXoaTTNhanvien,
-  handleVnPay:handleVnPay
+  handleLayTTVe_idKH:handleLayTTVe_idKH,
+  handleLayTTRap : handleLayTTRap,
+  handleLayTTChieu_idc: handleLayTTChieu_idc,
+  handleLayTTDoan_idve: handleLayTTDoan_idve
 };
