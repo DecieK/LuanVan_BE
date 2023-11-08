@@ -196,6 +196,112 @@ let handleDatve = (data) => {
     }
   });
 };
+let handleCapnhatTTve = (data) => {
+  // interface DSDichVu {
+  //   id: number,
+  //   ten: string,
+  //   anhminhhoa: string,
+  //   loai: string,
+  //   mota: string,
+  //   gia: number,
+  //   size: string,
+  //   sl: number
+  // }
+  return new Promise(async (resovle, reject) => {
+    try {
+      if (
+        !data.hten_KH ||
+        !data.httt ||
+        !data.tongtien ||
+        !data.soluongghe ||
+        !data.ngaymuave ||
+        !data.id_KH ||
+        !data.id_ghe ||
+        !data.id_suatchieu ||
+        !data.id_rap ||
+        !data.id_cumrap ||
+        // !data.id_KM ||
+        !data.id_NV ||
+        !data.macode ||
+        !data.id_chieu ||
+        !data.id
+      ) {
+        resovle({
+          errCode: 1,
+          errMessage: "Missing parameter",
+        });
+      } else {
+
+        let ve = await db.ves.findOne({
+          where: {
+            id: data.id
+          },
+          raw: false,
+        });
+        let ctve = await db.chitietves.findOne({
+          where: {
+            id_ve: data.id
+          },
+          raw: false,
+        });
+        if (ve) {
+          ve.Hten_KH= data.hten_KH,
+          ve.HTTT= data.httt,
+          ve.Tongtien= data.tongtien,
+          ve.SLghe= data.soluongghe,
+          ve.Ngaymuave= data.ngaymuave,
+          ve.id_KH= data.id_KH,
+          ve.id_chieu= data.id_chieu,
+          ve.id_suatchieu= data.id_suatchieu,
+          ve.id_rap= data.id_rap,
+          ve.id_cumrap= data.id_cumrap,
+          ve.id_KM= data.id_KM,
+          ve.id_NV= data.id_NV,
+          ve.maCode= data.macode,
+
+          await ve.save();
+        } else {
+          resovle({
+            errCode: 1,
+            errMessage: "Cập nhật thông tin chiếu KHÔNG thành thông",
+          });
+        }
+        
+        
+        
+        let n_id = await db.ves.max('id'); // 40
+        for (let index1 = 0; index1 < data.soluongghe; index1++) {
+          await db.chitietves.create({
+            id_ve: n_id,
+            id_ghe: data.id_ghe[index1]
+          });
+        }
+        // console.log("ádas",data.id_doan.length)
+        for (let index2 = 0; index2 < data.id_doan.length; index2++) {
+          if (data.id_doan[index2].sl > 0) {
+            await db.chitietdoans.create({
+              slda: data.id_doan[index2].sl,
+              id_doan: data.id_doan[index2].id,
+              id_ve: n_id
+              // id_ghe: data.id_ghe[index2]
+            });
+          }
+        }
+        resovle({
+          errCode: 0,
+          errMessage: "Đặt vé thành công",
+        });
+      }
+      // resovle({
+      //   errCode: thongtinve,
+      //   errMessage: "Đặt vé thành công",
+      // });
+      // }
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
 
 let handleTTchitietve = (id_ve) => {
   return new Promise(async (resolve, reject) => {
@@ -1918,7 +2024,29 @@ let handleLayTTDoan_idve = (key) => {
   });
 };
 
+let handleLayTTKhuyenmai = (key) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let khuyenmai = "";
+      if (key === "ALL") {
+        khuyenmai = await db.khuyenmais.findAll({
 
+        });
+      }
+
+      if (key && key !== "ALL") {
+        khuyenmai = await db.khuyenmais.findAll({
+          where: {
+            id: key
+          },
+        });
+      }
+      resolve(khuyenmai);
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
 
 
 
@@ -1929,6 +2057,7 @@ module.exports = {
   handleDangnhap: handleDangnhap,
   handleDangky: handleDangky,
   handleDatve: handleDatve,
+  handleCapnhatTTve: handleCapnhatTTve,
   handleTTchitietve: handleTTchitietve,
   handleTTGhe: handleTTGhe,
   handleTTChieu: handleTTChieu,
@@ -1977,9 +2106,10 @@ module.exports = {
   handleSuaTTNhanvien: handleSuaTTNhanvien,
   handleXoaTTNhanvien: handleXoaTTNhanvien,
   handleLayTTVe_idKH: handleLayTTVe_idKH,
-  handleLayTTRap : handleLayTTRap,
+  handleLayTTRap: handleLayTTRap,
   handleLayTTChieu_idc: handleLayTTChieu_idc,
-  handleLayTTDoan_idve: handleLayTTDoan_idve
+  handleLayTTDoan_idve: handleLayTTDoan_idve,
+  handleLayTTKhuyenmai: handleLayTTKhuyenmai
 
 
 

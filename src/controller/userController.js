@@ -51,6 +51,18 @@ let handleDatve = async (req, res) => {
     });
   }
 };
+let handleCapnhatTTve = async (req, res) => {
+  try {
+    let infor = await userService.handleCapnhatTTve(req.body);
+    return res.status(200).json(infor);
+  } catch (e) {
+    console.log(e);
+    return res.status(200).json({
+      errCode: -1,
+      errMessage: "Error from the server",
+    });
+  }
+};
 
 let handleTTchitietve = async (req, res) => {
   // let Dienthoai = "ALL"; //req.query.id; //get all or id
@@ -904,6 +916,25 @@ let handleLayTTDoan_idve = async (req, res) => {
   });
 };
 
+let handleLayTTKhuyenmai= async (req, res) => {
+  let key = req.query.keyword;
+
+  if (!key) {
+    return res.status(200).json({
+      errCode: 1,
+      errMessage: "missing require parameters",
+      khuyenmais: {},
+    });
+  }
+
+  let khuyenmais = await userService.handleLayTTKhuyenmai(key);
+
+  return res.status(200).json({
+    errCode: 0,
+    errMessage: "ok",
+    khuyenmais,
+  });
+};
 
 
 
@@ -920,6 +951,7 @@ module.exports = {
   handleDangnhap: handleDangnhap,
   handleDangky: handleDangky,
   handleDatve: handleDatve,
+  handleCapnhatTTve: handleCapnhatTTve,
   handleTTchitietve: handleTTchitietve,
   handleTTGhe: handleTTGhe,
   handleTTChieu: handleTTChieu,
@@ -971,5 +1003,6 @@ module.exports = {
   handleLayTTVe_idKH:handleLayTTVe_idKH,
   handleLayTTRap : handleLayTTRap,
   handleLayTTChieu_idc: handleLayTTChieu_idc,
-  handleLayTTDoan_idve: handleLayTTDoan_idve
+  handleLayTTDoan_idve: handleLayTTDoan_idve,
+  handleLayTTKhuyenmai: handleLayTTKhuyenmai
 };

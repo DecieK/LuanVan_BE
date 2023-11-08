@@ -10,6 +10,7 @@ const initWebRoutes = (app) => {
 
   router.get("/api/TTChitietve", userController.handleTTchitietve);
   router.post("/api/Datve", userController.handleDatve);
+  router.post("/api/CapnhatTTve", userController.handleCapnhatTTve);
   router.post("/api/Dangky", userController.handleDangky);
   router.post("/api/Dangnhap", userController.handleDangnhap);
   router.get("/api/TTGhe", userController.handleTTGhe);
@@ -78,7 +79,7 @@ const initWebRoutes = (app) => {
   router.get("/api/LayTTRap", userController.handleLayTTRap);
   router.get("/api/LayTTChieu_idc", userController.handleLayTTChieu_idc);
   router.get("/api/LayTTDoan_idve", userController.handleLayTTDoan_idve);
-
+  router.get("/api/LayTTKhuyenmai", userController.handleLayTTKhuyenmai);
 
 
 
