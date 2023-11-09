@@ -197,16 +197,7 @@ let handleDatve = (data) => {
   });
 };
 let handleCapnhatTTve = (data) => {
-  // interface DSDichVu {
-  //   id: number,
-  //   ten: string,
-  //   anhminhhoa: string,
-  //   loai: string,
-  //   mota: string,
-  //   gia: number,
-  //   size: string,
-  //   sl: number
-  // }
+
   return new Promise(async (resovle, reject) => {
     try {
       if (
@@ -260,33 +251,32 @@ let handleCapnhatTTve = (data) => {
           ve.maCode= data.macode,
 
           await ve.save();
+        
+        
+          for (let index1 = 0; index1 < data.soluongghe; index1++) {
+            await db.chitietves.create({
+              id_ve: data.id,
+              id_ghe: data.id_ghe[index1]
+            });
+          }
+          // console.log("ádas",data.id_doan.length)
+          for (let index2 = 0; index2 < data.id_doan.length; index2++) {
+            if (data.id_doan[index2].sl > 0) {
+              await db.chitietdoans.create({
+                slda: data.id_doan[index2].sl,
+                id_doan: data.id_doan[index2].id,
+                id_ve: data.id
+              });
+            }
+          }
+
         } else {
           resovle({
             errCode: 1,
             errMessage: "Cập nhật thông tin chiếu KHÔNG thành thông",
           });
-        }
-        
-        
-        
-        let n_id = await db.ves.max('id'); // 40
-        for (let index1 = 0; index1 < data.soluongghe; index1++) {
-          await db.chitietves.create({
-            id_ve: n_id,
-            id_ghe: data.id_ghe[index1]
-          });
-        }
-        // console.log("ádas",data.id_doan.length)
-        for (let index2 = 0; index2 < data.id_doan.length; index2++) {
-          if (data.id_doan[index2].sl > 0) {
-            await db.chitietdoans.create({
-              slda: data.id_doan[index2].sl,
-              id_doan: data.id_doan[index2].id,
-              id_ve: n_id
-              // id_ghe: data.id_ghe[index2]
-            });
-          }
-        }
+        }      
+
         resovle({
           errCode: 0,
           errMessage: "Đặt vé thành công",
