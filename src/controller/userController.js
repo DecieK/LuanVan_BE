@@ -935,7 +935,28 @@ let handleLayTTKhuyenmai= async (req, res) => {
     khuyenmais,
   });
 };
-
+let handleXoaCTDoan = async (req, res) => {
+  if(!req.body.id){
+      return res.status(200).json({
+          errCode: 1,
+          message: "missing require parameter",
+      })
+  }
+  let message = await userService.handleXoaCTDoan(req.body.id);
+  console.log(message);
+  return res.status(200).json(message);
+}
+let handleXoaCTVe = async (req, res) => {
+  if(!req.body.id){
+      return res.status(200).json({
+          errCode: 1,
+          message: "missing require parameter",
+      })
+  }
+  let message = await userService.handleXoaCTVe(req.body.id);
+  console.log(message);
+  return res.status(200).json(message);
+}
 
 
 
@@ -1004,5 +1025,7 @@ module.exports = {
   handleLayTTRap : handleLayTTRap,
   handleLayTTChieu_idc: handleLayTTChieu_idc,
   handleLayTTDoan_idve: handleLayTTDoan_idve,
-  handleLayTTKhuyenmai: handleLayTTKhuyenmai
+  handleLayTTKhuyenmai: handleLayTTKhuyenmai,
+  handleXoaCTDoan: handleXoaCTDoan,
+  handleXoaCTVe: handleXoaCTVe
 };

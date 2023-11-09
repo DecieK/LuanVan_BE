@@ -229,30 +229,50 @@ let handleCapnhatTTve = (data) => {
           },
           raw: false,
         });
-        let ctve = await db.chitietves.findOne({
+        let ctve = await db.chitietves.findAll({
           where: {
             id_ve: data.id
           },
           raw: false,
         });
+        if (ctve) {
+          await db.chitietves.destroy({
+            where: {
+              id_ve: data.id
+            },
+          });
+        }
+        let ctdoan = await db.chitietdoans.findAll({
+          where: {
+            id_ve: data.id
+          },
+          raw: false,
+        });
+        if (ctdoan) {
+          await db.chitietdoans.destroy({
+            where: {
+              id_ve: data.id
+            },
+          });
+        }
         if (ve) {
-          ve.Hten_KH= data.hten_KH,
-          ve.HTTT= data.httt,
-          ve.Tongtien= data.tongtien,
-          ve.SLghe= data.soluongghe,
-          ve.Ngaymuave= data.ngaymuave,
-          ve.id_KH= data.id_KH,
-          ve.id_chieu= data.id_chieu,
-          ve.id_suatchieu= data.id_suatchieu,
-          ve.id_rap= data.id_rap,
-          ve.id_cumrap= data.id_cumrap,
-          ve.id_KM= data.id_KM,
-          ve.id_NV= data.id_NV,
-          ve.maCode= data.macode,
+          ve.Hten_KH = data.hten_KH,
+            ve.HTTT = data.httt,
+            ve.Tongtien = data.tongtien,
+            ve.SLghe = data.soluongghe,
+            ve.Ngaymuave = data.ngaymuave,
+            ve.id_KH = data.id_KH,
+            ve.id_chieu = data.id_chieu,
+            ve.id_suatchieu = data.id_suatchieu,
+            ve.id_rap = data.id_rap,
+            ve.id_cumrap = data.id_cumrap,
+            ve.id_KM = data.id_KM,
+            ve.id_NV = data.id_NV,
+            ve.maCode = data.macode,
 
-          await ve.save();
-        
-        
+            await ve.save();
+
+
           for (let index1 = 0; index1 < data.soluongghe; index1++) {
             await db.chitietves.create({
               id_ve: data.id,
@@ -275,7 +295,7 @@ let handleCapnhatTTve = (data) => {
             errCode: 1,
             errMessage: "Cập nhật thông tin chiếu KHÔNG thành thông",
           });
-        }      
+        }
 
         resovle({
           errCode: 0,
@@ -2038,6 +2058,61 @@ let handleLayTTKhuyenmai = (key) => {
   });
 };
 
+let handleXoaCTDoan = async (id_ve) => {
+  return new Promise(async (resolve, reject) => {
+    let ctdoan = await db.chitietdoans.findOne({
+      where: {
+        id_ve: id_ve
+      },
+    });
+
+    if (!ctdoan) {
+      resolve({
+        errCode: 2,
+        errMessage: `Không tìm thấy Chi tiet do an`,
+      });
+    }
+
+    await db.chitietdoans.destroy({
+      where: {
+        id_ve: id_ve
+      },
+    });
+
+    resolve({
+      errCode: 0,
+      message: "Thông tin nChi tiet do an đã xóa",
+    });
+  });
+};
+let handleXoaCTVe = async (id_ve) => {
+  return new Promise(async (resolve, reject) => {
+    let ctve = await db.chitietves.findOne({
+      where: {
+        id_ve: id_ve
+      },
+    });
+
+    if (!ctve) {
+      resolve({
+        errCode: 2,
+        errMessage: `Không tìm thấy Chi tiet do ve`,
+      });
+    }
+
+    await db.chitietves.destroy({
+      where: {
+        id_ve: id_ve
+      },
+    });
+
+    resolve({
+      errCode: 0,
+      message: "Thông tin nChi tiet do ve đã xóa",
+    });
+  });
+};
+
 
 
 
@@ -2099,8 +2174,9 @@ module.exports = {
   handleLayTTRap: handleLayTTRap,
   handleLayTTChieu_idc: handleLayTTChieu_idc,
   handleLayTTDoan_idve: handleLayTTDoan_idve,
-  handleLayTTKhuyenmai: handleLayTTKhuyenmai
-
+  handleLayTTKhuyenmai: handleLayTTKhuyenmai,
+  handleXoaCTDoan: handleXoaCTDoan,
+  handleXoaCTVe: handleXoaCTVe
 
 
 
