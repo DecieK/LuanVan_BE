@@ -17,7 +17,8 @@ router.get('/', function (req, res, next) {
 });
 
 router.get('/create_payment_url', function (req, res, next) {
-    res.render('../views/order.jade', { title: 'Tạo mới đơn hàng', amount: 10000 })
+    res.render('../views/order.jade', { title: 'Tạo mới đơn hàng', amount : req.query.keyword
+})
 });
 
 router.get('/querydr', function (req, res, next) {
@@ -51,7 +52,7 @@ router.post('/create_payment_url', function (req, res, next) {
     let secretKey = 'GXEXVMCPYVXIBPUAPVARKUCBKYJWSUAB';
     let vnpUrl = 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html';
     // let vnpUrl = 'http://localhost:3000/';
-    let returnUrl = 'http://localhost:3000/';
+    let returnUrl = `http://localhost:3000`;
     let orderId = randomInt(0, 999);
     // let amount = 1000 * 100;
     // let bankCode = 'NCB';
@@ -104,8 +105,8 @@ router.get('/vnpay_return', function (req, res, next) {
     vnp_Params = sortObject(vnp_Params);
 
     let config = require('config');
-    let tmnCode = config.get('vnp_TmnCode');
-    let secretKey = config.get('vnp_HashSecret');
+    let tmnCode = 'DO4KCUCZ';
+    let secretKey = 'GXEXVMCPYVXIBPUAPVARKUCBKYJWSUAB';
 
     let querystring = require('qs');
     let signData = querystring.stringify(vnp_Params, { encode: false });
@@ -116,9 +117,9 @@ router.get('/vnpay_return', function (req, res, next) {
     if (secureHash === signed) {
         //Kiem tra xem du lieu trong db co hop le hay khong va thong bao ket qua
 
-        res.render('success', { code: vnp_Params['vnp_ResponseCode'] })
+        res.render('../views/success.jade', { code: vnp_Params['vnp_ResponseCode'] })
     } else {
-        res.render('success', { code: '97' })
+        res.render('../views/success.jade', { code: '97' })
     }
 });
 
