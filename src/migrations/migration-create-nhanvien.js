@@ -32,12 +32,12 @@ module.exports = {
       Chucvu_NV: {
         type: Sequelize.STRING,
       },
-      Taikhoan_NV: {
-        type: Sequelize.STRING,
-      },
-      Matkhau_NV: {
-        type: Sequelize.STRING,
-      },
+      // Taikhoan_NV: {
+      //   type: Sequelize.STRING,
+      // },
+      // Matkhau_NV: {
+      //   type: Sequelize.STRING,
+      // },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

@@ -38,12 +38,12 @@ module.exports = {
       Diemtichluy_KH: {
         type: Sequelize.INTEGER,
       },
-      Taikhoan_KH: {
-        type: Sequelize.STRING,
-      },
-      Matkhau_KH: {
-        type: Sequelize.STRING,
-      },
+      // Taikhoan_KH: {
+      //   type: Sequelize.STRING,
+      // },
+      // Matkhau_KH: {
+      //   type: Sequelize.STRING,
+      // },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
