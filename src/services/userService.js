@@ -61,9 +61,9 @@ let handleDangky = (data) => {
         !data.sdt_KH ||
         !data.cccd_KH ||
         !data.email_KH ||
-        !data.diachi_KH ||
-        !data.taikhoan_KH ||
-        !data.matkhau_KH
+        !data.diachi_KH 
+        // !data.taikhoan_KH ||
+        // !data.matkhau_KH
       ) {
         resovle({
           errCode: 101,
@@ -85,7 +85,7 @@ let handleDangky = (data) => {
           });
         } else {
           await db.khachhangs.create({
-            id_KH: 5,
+            // id_KH: 5,
             Hten_KH: data.hten_KH,
             Sdt_KH: data.sdt_KH,
             Email_KH: data.email_KH,
@@ -93,8 +93,8 @@ let handleDangky = (data) => {
             Diachi_KH: data.diachi_KH,
             Gioitinh_KH: data.gt_KH,
             Cccd_KH: data.cccd_KH,
-            Taikhoan_KH: data.taikhoan_KH,
-            Matkhau_KH: data.matkhau_KH,
+            // Taikhoan_KH: data.taikhoan_KH,
+            // Matkhau_KH: data.matkhau_KH,
           });
 
           resovle({
@@ -1645,7 +1645,7 @@ let handleLayTTKhachhang = (key) => {
       if (key && key !== "ALL") {
         khachhang = await db.khachhangs.findAll({
           where: {
-            Taikhoan_KH: key
+            Email_KH: key
           },
         });
       }
@@ -1791,7 +1791,7 @@ let handleLayTTNhanvien = (key) => {
       if (key && key !== "ALL") {
         nhanvien = await db.nhanviens.findAll({
           where: {
-            Taikhoan_NV: key
+            Email_NV: key
           },
         });
       }
@@ -1837,8 +1837,8 @@ let handleThemTTNhanvien = (data) => {
           Gioitinh_NV: data.gioitinh_nv,
           Cccd_NV: data.cccd_nv,
           Chucvu_NV: data.chucvu_nv,
-          Taikhoan_NV: data.taikhoan_nv,
-          Matkhau_NV: data.matkhau_nv,
+          // Taikhoan_NV: data.taikhoan_nv,
+          // Matkhau_NV: data.matkhau_nv,
         });
 
         resovle({
@@ -1871,6 +1871,7 @@ let handleSuaTTNhanvien = (data) => {
         !data.chucvu_nv ||
         !data.taikhoan_nv ||
         !data.matkhau_nv ||
+        data.email_nv ||
         !data.id
         // 0 === 1
       ) {
@@ -1889,14 +1890,15 @@ let handleSuaTTNhanvien = (data) => {
         if (nhanvien) {
           nhanvien.Hten_NV = data.hten_nv;
           nhanvien.Sdt_NV = data.sdt_nv;
+          nhanvien.Email_NV = data.email_nv;
           nhanvien.Ngaysinh_NV = data.ngaysinh_nv;
           nhanvien.Tuoi_NV = data.tuoi_nv;
           nhanvien.Diachi_NV = data.diachi_nv;
           nhanvien.Gioitinh_NV = data.gioitinh_nv;
           nhanvien.Cccd_NV = data.cccd_nv;
           nhanvien.Chucvu_NV = data.chucvu_nv;
-          nhanvien.Taikhoan_NV = data.taikhoan_nv;
-          nhanvien.Matkhau_NV = data.matkhau_nv;
+          // nhanvien.Taikhoan_NV = data.taikhoan_nv;
+          // nhanvien.Matkhau_NV = data.matkhau_nv;
 
           await nhanvien.save();
         } else {

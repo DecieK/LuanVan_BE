@@ -15,14 +15,15 @@ module.exports = (sequelize, DataTypes) => {
     {
       Hten_NV: DataTypes.STRING,
       Sdt_NV: DataTypes.STRING,
+      Email_NV: DataTypes.STRING,
       Ngaysinh_NV: DataTypes.DATEONLY,
       Tuoi_NV: DataTypes.STRING,
       Diachi_NV: DataTypes.STRING,
       Gioitinh_NV: DataTypes.STRING,
       Cccd_NV: DataTypes.STRING,
       Chucvu_NV: DataTypes.STRING,
-      Taikhoan_NV: DataTypes.STRING,
-      Matkhau_NV: DataTypes.STRING,
+      // Taikhoan_NV: DataTypes.STRING,
+      // Matkhau_NV: DataTypes.STRING,
     },
     {
       sequelize,
