@@ -1,5 +1,8 @@
 import express from "express";
 import userController from "../controller/userController";
+import register from "../auth/register";
+import userService from "../services/emailService";
+
 
 
 // var appRoot = require("app-root-path");
@@ -85,6 +88,8 @@ const initWebRoutes = (app) => {
   router.delete("/api/XoaCTDoan", userController.handleXoaCTDoan);
   router.delete("/api/XoaCTVe", userController.handleXoaCTVe);
 
+  router.post("api/verify", register.register)
+  router.post("api/test", userController.handleSendmail)
 
 
   // router.post("/api/VnPay", userController.handleVnPay);

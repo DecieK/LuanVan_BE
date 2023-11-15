@@ -961,6 +961,19 @@ let handleXoaCTVe = async (req, res) => {
 
 
 
+let handleSendmail = async (req, res) => {
+  console.log('asdas')
+  try {
+    let nhanvien = await userService.handleSendmail(req.body);
+    return res.status(200).json(nhanvien);
+  } catch (e) {
+    console.log(e);
+    return res.status(200).json({
+      errCode: -1,
+      errMessage: "Error from the server",
+    });
+  }
+};
 
 
 
@@ -1027,5 +1040,6 @@ module.exports = {
   handleLayTTDoan_idve: handleLayTTDoan_idve,
   handleLayTTKhuyenmai: handleLayTTKhuyenmai,
   handleXoaCTDoan: handleXoaCTDoan,
-  handleXoaCTVe: handleXoaCTVe
+  handleXoaCTVe: handleXoaCTVe,
+  handleSendmail:handleSendmail,
 };

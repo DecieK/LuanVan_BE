@@ -1,5 +1,6 @@
 // import { getSpaceUntilMaxLength } from "@testing-library/user-event/dist/utils";
 import db from "../models/index";
+import emailService from "./emailService"
 // const { Op } = require("sequelize");
 // import bcrypt, { hash } from "bcryptjs"; //hashpassword
 
@@ -1825,6 +1826,8 @@ let handleThemTTNhanvien = (data) => {
         });
       } else {
 
+        await emailService.sendEmail('luongvukhoa572001@gmail.com')
+
         await db.nhanviens.create({
           Hten_NV: data.hten_nv,
           Sdt_NV: data.sdt_nv,
@@ -2113,6 +2116,15 @@ let handleXoaCTVe = async (id_ve) => {
   });
 };
 
+let handleSendmail = async (email) => {
+  console.log('12343')
+
+  return new Promise(async (resolve, reject) => {
+    await emailService.sendEmail(email)
+  });
+ 
+};
+
 
 
 
@@ -2176,7 +2188,8 @@ module.exports = {
   handleLayTTDoan_idve: handleLayTTDoan_idve,
   handleLayTTKhuyenmai: handleLayTTKhuyenmai,
   handleXoaCTDoan: handleXoaCTDoan,
-  handleXoaCTVe: handleXoaCTVe
+  handleXoaCTVe: handleXoaCTVe,
+  handleSendmail: handleSendmail
 
 
 
