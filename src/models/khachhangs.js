@@ -24,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
       Mathethanhvien_KH: DataTypes.STRING,
       Diemtichluy_KH: DataTypes.STRING,
       // Taikhoan_KH: DataTypes.STRING,
-      // Matkhau_KH: DataTypes.STRING,
+      Matkhau_KH: DataTypes.STRING,
     },
     {
       sequelize,

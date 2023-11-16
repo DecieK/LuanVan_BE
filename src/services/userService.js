@@ -3,21 +3,23 @@ import db from "../models/index";
 import emailService from "./emailService"
 // const { Op } = require("sequelize");
 // import bcrypt, { hash } from "bcryptjs"; //hashpassword
+const bcrypt = require('bcrypt');
+import userController from "../controller/userController";
 
 // const salt = bcrypt.genSaltSync(10);
 
-let handleDangnhap = (username, password) => {
+let handleDangnhap = (email, password) => {
   return new Promise(async (resolve, reject) => {
     try {
       let userdata = {};
-      if (username) {
+      if (email) {
         //user ton tai >>> true
         //compare password
         let khachhang = await db.khachhangs.findOne({
           //get duoc alldata user
           attributes: ["Taikhoan_Kh", "Matkhau_KH"], //get data can thiet
           where: {
-            Taikhoan_Kh: username
+            Email_KH: email
           },
           raw: true,
         });
@@ -61,9 +63,9 @@ let handleDangky = (data) => {
         !data.sdt_KH ||
         !data.cccd_KH ||
         !data.email_KH ||
-        !data.diachi_KH 
+        !data.diachi_KH ||
         // !data.taikhoan_KH ||
-        // !data.matkhau_KH
+        !data.matkhau_KH
       ) {
         resovle({
           errCode: 101,
@@ -88,13 +90,18 @@ let handleDangky = (data) => {
             // id_KH: 5,
             Hten_KH: data.hten_KH,
             Sdt_KH: data.sdt_KH,
-            Email_KH: data.email_KH,
+            Email_KH: '?' + data.email_KH,
             Ngaysinh_KH: data.Ngaysinh,
             Diachi_KH: data.diachi_KH,
             Gioitinh_KH: data.gt_KH,
             Cccd_KH: data.cccd_KH,
             // Taikhoan_KH: data.taikhoan_KH,
-            // Matkhau_KH: data.matkhau_KH,
+            Matkhau_KH: data.matkhau_KH,
+          });
+
+          bcrypt.hash(data.email_KH, parseInt(process.env.BCRYPT_SALT_ROUND)).then((hashedEmail) => {
+            console.log(`${process.env.APP_URL}/verify?email=${data.email_KH}&token=${hashedEmail}`);
+            emailService.sendEmail(data.email_KH, "Verify Email", `<a href="${process.env.URL_REACT}/api/verify?email=${data.email_KH}&token=${hashedEmail}"> Verify </a>`)
           });
 
           resovle({
@@ -2118,16 +2125,98 @@ let handleXoaCTVe = async (id_ve) => {
   });
 };
 
-let handleSendmail = async (email) => {
-  console.log('12343')
 
-  return new Promise(async (resolve, reject) => {
-    await emailService.sendEmail(email)
+let handleSendmail = (data) => {
+
+  return new Promise(async (resovle, reject) => {
+    try {
+      if (
+
+        !data.email
+        // 0 === 1
+      ) {
+        resovle({
+          errCode: 1,
+          errMessage: "Missing parameter email",
+        });
+      } else {
+
+        // await emailService.sendEmail(data.email)
+
+        bcrypt.hash(data.email, parseInt(process.env.BCRYPT_SALT_ROUND)).then((hashedEmail) => {
+          console.log(`${process.env.APP_URL}/verify?email=${data.email}&token=${hashedEmail}`);
+          emailService.sendEmail(data.email, "Verify Email", `<a href="${process.env.URL_REACT}/api/verify?email=${data.email}&token=${hashedEmail}"> Verify </a>`)
+        });
+      }
+
+      resovle({
+        errCode: 0,
+        errMessage: "Thêm thông tin nhân viên thành công",
+      });
+      // }
+    } catch (e) {
+      reject(e);
+    }
   });
- 
 };
 
+let handleVerify = (email, token) => {
+  return new Promise(async (resovle, reject) => {
+    try {
+      bcrypt.compare(email, token, async (err, result) => {
+        console.log(email)
+        if (result == true) {
+          await handleUpdateVerifyEmail(email)
+          resovle({
+            errCode: 0,
+            errMessage: "Xác nhận email thành công",
+          });
+        } else {
+          resovle({
+            errCode: 1,
+            errMessage: "Xác nhận email không thành công",
+          });
+        }
+      })
+      resovle({
+        errCode: 0,
+        errMessage: "Xác nhận email thành công",
+      });
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
 
+let handleUpdateVerifyEmail = (email) => {
+  return new Promise(async (resovle, reject) => {
+    try {
+      let khachhang = await db.khachhangs.findOne({
+        where: {
+          Email_KH: '?' + email,
+        },
+        raw: false,
+
+      })
+
+      if (khachhang) {
+        console.log("email", khachhang.Email_KH)
+
+        khachhang.Email_KH = email
+        await khachhang.save()
+      }
+      // redirect('http://localhost:3000/login')
+
+      resovle({
+        errCode: 0,
+        errMessage: "Thêm thông tin nhân viên thành công",
+      });
+      // }
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
 
 
 
@@ -2191,7 +2280,10 @@ module.exports = {
   handleLayTTKhuyenmai: handleLayTTKhuyenmai,
   handleXoaCTDoan: handleXoaCTDoan,
   handleXoaCTVe: handleXoaCTVe,
-  handleSendmail: handleSendmail
+  handleSendmail: handleSendmail,
+  handleVerify: handleVerify,
+  handleUpdateVerifyEmail: handleUpdateVerifyEmail,
+
 
 
 

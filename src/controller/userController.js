@@ -4,16 +4,16 @@ import db from "../models/index";
 
 
 let handleDangnhap = async (req, res) => {
-  let username = req.body.Taikhoan_KH;
+  let email = req.body.Email_KH;
   let password = req.body.Matkhau_KH;
 
-  if (!username || !password) {
+  if (!email || !password) {
     return res.status(500).json({
       errCode: 1,
       message: "Missing input",
     });
   }
-  let userdata = await userService.handleDangnhap(username, password);
+  let userdata = await userService.handleDangnhap(email, password);
   console.log(userdata);
   //check email exist
   //compare password
@@ -141,7 +141,7 @@ let handleTTChieu = async (req, res) => {
   let ngaychieu = req.body.ngaychieu;
   let id_rap = req.body.id_rap;
 
-  if ( !id_rap || !id_phim || !ngaychieu) {
+  if (!id_rap || !id_phim || !ngaychieu) {
     return res.status(500).json({
       errCode: 1,
       message: "Missing ",
@@ -228,13 +228,15 @@ let handleTTPhim = async (req, res) => {
 
 let getHomepage = async (req, res) => {
 
-try {
-  let data = await db.phims.findAll();
+  try {
+    let data = await db.phims.findAll();
 
-  return res.render("index.ejs", { data: JSON.stringify(data) });
-} catch (e) {
-  console.log(e);
-}
+    return res.render("index.ejs", {
+      data: JSON.stringify(data)
+    });
+  } catch (e) {
+    console.log(e);
+  }
 };
 
 
@@ -436,11 +438,11 @@ let handleSuaTTCumrap = async (req, res) => {
 };
 
 let handleXoaTTCumrap = async (req, res) => {
-  if(!req.body.id){
-      return res.status(200).json({
-          errCode: 1,
-          message: "missing require parameter",
-      })
+  if (!req.body.id) {
+    return res.status(200).json({
+      errCode: 1,
+      message: "missing require parameter",
+    })
   }
   let message = await userService.handleXoaTTCumrap(req.body.id);
   console.log(message);
@@ -474,11 +476,11 @@ let handleSuaTTRap = async (req, res) => {
 };
 
 let handleXoaTTRap = async (req, res) => {
-  if(!req.body.id){
-      return res.status(200).json({
-          errCode: 1,
-          message: "missing require parameter",
-      })
+  if (!req.body.id) {
+    return res.status(200).json({
+      errCode: 1,
+      message: "missing require parameter",
+    })
   }
   let message = await userService.handleXoaTTRap(req.body.id);
   console.log(message);
@@ -512,11 +514,11 @@ let handleSuaTTGhe = async (req, res) => {
 };
 
 let handleXoaTTGhe = async (req, res) => {
-  if(!req.body.id){
-      return res.status(200).json({
-          errCode: 1,
-          message: "missing require parameter",
-      })
+  if (!req.body.id) {
+    return res.status(200).json({
+      errCode: 1,
+      message: "missing require parameter",
+    })
   }
   let message = await userService.handleXoaTTGhe(req.body.id);
   console.log(message);
@@ -552,11 +554,11 @@ let handleSuaTTPhim = async (req, res) => {
 };
 
 let handleXoaTTPhim = async (req, res) => {
-  if(!req.body.id){
-      return res.status(200).json({
-          errCode: 1,
-          message: "missing require parameter",
-      })
+  if (!req.body.id) {
+    return res.status(200).json({
+      errCode: 1,
+      message: "missing require parameter",
+    })
   }
   let message = await userService.handleXoaTTPhim(req.body.id);
   console.log(message);
@@ -592,11 +594,11 @@ let handleSuaTTLoaiphim = async (req, res) => {
 };
 
 let handleXoaTTLoaiphim = async (req, res) => {
-  if(!req.body.id){
-      return res.status(200).json({
-          errCode: 1,
-          message: "missing require parameter",
-      })
+  if (!req.body.id) {
+    return res.status(200).json({
+      errCode: 1,
+      message: "missing require parameter",
+    })
   }
   let message = await userService.handleXoaTTLoaiphim(req.body.id);
   console.log(message);
@@ -631,11 +633,11 @@ let handleSuaTTSuatchieu = async (req, res) => {
 };
 
 let handleXoaTTSuatchieu = async (req, res) => {
-  if(!req.body.id){
-      return res.status(200).json({
-          errCode: 1,
-          message: "missing require parameter",
-      })
+  if (!req.body.id) {
+    return res.status(200).json({
+      errCode: 1,
+      message: "missing require parameter",
+    })
   }
   let message = await userService.handleXoaTTSuatchieu(req.body.id);
   console.log(message);
@@ -669,11 +671,11 @@ let handleSuaTTChieu = async (req, res) => {
 };
 
 let handleXoaTTChieu = async (req, res) => {
-  if(!req.body.id){
-      return res.status(200).json({
-          errCode: 1,
-          message: "missing require parameter",
-      })
+  if (!req.body.id) {
+    return res.status(200).json({
+      errCode: 1,
+      message: "missing require parameter",
+    })
   }
   let message = await userService.handleXoaTTChieu(req.body.id);
   console.log(message);
@@ -706,11 +708,11 @@ let handleSuaTTDoan = async (req, res) => {
 };
 
 let handleXoaTTDoan = async (req, res) => {
-  if(!req.body.id){
-      return res.status(200).json({
-          errCode: 1,
-          message: "missing require parameter",
-      })
+  if (!req.body.id) {
+    return res.status(200).json({
+      errCode: 1,
+      message: "missing require parameter",
+    })
   }
   let message = await userService.handleXoaTTDoan(req.body.id);
   console.log(message);
@@ -765,11 +767,11 @@ let handleSuaTTKhuyenmai = async (req, res) => {
 };
 
 let handleXoaTTKhuyenmai = async (req, res) => {
-  if(!req.body.id){
-      return res.status(200).json({
-          errCode: 1,
-          message: "missing require parameter",
-      })
+  if (!req.body.id) {
+    return res.status(200).json({
+      errCode: 1,
+      message: "missing require parameter",
+    })
   }
   let message = await userService.handleXoaTTKhuyenmai(req.body.id);
   console.log(message);
@@ -825,11 +827,11 @@ let handleSuaTTNhanvien = async (req, res) => {
 };
 
 let handleXoaTTNhanvien = async (req, res) => {
-  if(!req.body.id){
-      return res.status(200).json({
-          errCode: 1,
-          message: "missing require parameter",
-      })
+  if (!req.body.id) {
+    return res.status(200).json({
+      errCode: 1,
+      message: "missing require parameter",
+    })
   }
   let message = await userService.handleXoaTTNhanvien(req.body.id);
   console.log(message);
@@ -916,7 +918,7 @@ let handleLayTTDoan_idve = async (req, res) => {
   });
 };
 
-let handleLayTTKhuyenmai= async (req, res) => {
+let handleLayTTKhuyenmai = async (req, res) => {
   let key = req.query.keyword;
 
   if (!key) {
@@ -936,22 +938,22 @@ let handleLayTTKhuyenmai= async (req, res) => {
   });
 };
 let handleXoaCTDoan = async (req, res) => {
-  if(!req.body.id){
-      return res.status(200).json({
-          errCode: 1,
-          message: "missing require parameter",
-      })
+  if (!req.body.id) {
+    return res.status(200).json({
+      errCode: 1,
+      message: "missing require parameter",
+    })
   }
   let message = await userService.handleXoaCTDoan(req.body.id);
   console.log(message);
   return res.status(200).json(message);
 }
 let handleXoaCTVe = async (req, res) => {
-  if(!req.body.id){
-      return res.status(200).json({
-          errCode: 1,
-          message: "missing require parameter",
-      })
+  if (!req.body.id) {
+    return res.status(200).json({
+      errCode: 1,
+      message: "missing require parameter",
+    })
   }
   let message = await userService.handleXoaCTVe(req.body.id);
   console.log(message);
@@ -961,11 +963,23 @@ let handleXoaCTVe = async (req, res) => {
 
 
 
+// let handleSendmail = async (req, res) => {
+//   console.log('asdas')
+//   try {
+//     let nhanvien = await userService.handleSendmail(req.body);
+//     return res.status(200).json(nhanvien);
+//   } catch (e) {
+//     console.log(e);
+//     return res.status(200).json({
+//       errCode: -1,
+//       errMessage: "Error from the server",
+//     });
+//   }
+// };
 let handleSendmail = async (req, res) => {
-  console.log('asdas')
   try {
-    let nhanvien = await userService.handleSendmail(req.body);
-    return res.status(200).json(nhanvien);
+    let sendEmail = await userService.handleSendmail(req.body);
+    return res.status(200).json(sendEmail);
   } catch (e) {
     console.log(e);
     return res.status(200).json({
@@ -976,8 +990,42 @@ let handleSendmail = async (req, res) => {
 };
 
 
+let handleVerify = async (req, res) => {
+  let email = req.query.email;
+  let token = req.query.token;
 
+  if (!email || !token) {
+    return res.status(200).json({
+      errCode: 1,
+      errMessage: "missing require parameters",
+      khuyenmais: {},
+    });
+  }
 
+  let verify = await userService.handleVerify(email, token);
+  return res.redirect('http://localhost:3000/login')
+  return res.status(200).json({
+    errCode: 0,
+    errMessage: "ok",
+    verify,
+
+  });
+};
+
+let handleUpdateVerifyEmail = async (req, res) => {
+  try {
+    let UpdateVerifyEmail = await userService.handleUpdateVerifyEmail(req.body);
+    res.redirect('http://localhost:3000/login')
+    return res.status(200).json(UpdateVerifyEmail);
+
+  } catch (e) {
+    console.log(e);
+    return res.status(200).json({
+      errCode: -1,
+      errMessage: "Error from the server",
+    });
+  }
+};
 
 
 
@@ -1034,12 +1082,14 @@ module.exports = {
   handleThemTTNhanvien: handleThemTTNhanvien,
   handleSuaTTNhanvien: handleSuaTTNhanvien,
   handleXoaTTNhanvien: handleXoaTTNhanvien,
-  handleLayTTVe_idKH:handleLayTTVe_idKH,
-  handleLayTTRap : handleLayTTRap,
+  handleLayTTVe_idKH: handleLayTTVe_idKH,
+  handleLayTTRap: handleLayTTRap,
   handleLayTTChieu_idc: handleLayTTChieu_idc,
   handleLayTTDoan_idve: handleLayTTDoan_idve,
   handleLayTTKhuyenmai: handleLayTTKhuyenmai,
   handleXoaCTDoan: handleXoaCTDoan,
   handleXoaCTVe: handleXoaCTVe,
-  handleSendmail:handleSendmail,
+  handleSendmail: handleSendmail,
+  handleVerify: handleVerify,
+  handleUpdateVerifyEmail: handleUpdateVerifyEmail,
 };

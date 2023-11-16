@@ -35,9 +35,9 @@ module.exports = {
       // Taikhoan_NV: {
       //   type: Sequelize.STRING,
       // },
-      // Matkhau_NV: {
-      //   type: Sequelize.STRING,
-      // },
+      Matkhau_NV: {
+        type: Sequelize.STRING,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

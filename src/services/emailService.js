@@ -1,7 +1,7 @@
 require("dotenv").config();
 import nodemailer from "nodemailer";
 
-let sendEmail = async (email) => {
+let sendEmail = async(email, subject, htmlContent) => {
   // create reusable transporter object using the default SMTP transport
   let transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
@@ -16,10 +16,10 @@ let sendEmail = async (email) => {
   // send mail with defined transport object
   let info = await transporter.sendMail({
     from: '"tesst" <luongvukhoa572001@gmail.com>', // sender address
-    to: "luongvukhoa572001@gmail.com", // list of receivers
-    subject: "Thông báo đặt lịch khám bệnh ✔", // Subject line
-    text: "Hello world?", // plain text body
-    html: "<p>Hello world</p>",
+    to: email, // list of receivers
+    subject: subject, // Subject line
+    // text: "Hello world?", // plain text body
+    html: htmlContent,
   });
 };
 

@@ -88,8 +88,10 @@ const initWebRoutes = (app) => {
   router.delete("/api/XoaCTDoan", userController.handleXoaCTDoan);
   router.delete("/api/XoaCTVe", userController.handleXoaCTVe);
 
-  router.post("api/verify", register.register)
-  router.post("api/test", userController.handleSendmail)
+  router.get("/api/verify", userController.handleVerify)
+  router.post("/api/Sendemail", userController.handleSendmail);
+  router.post("/api/UpdateVerifyEmail", userController.handleUpdateVerifyEmail);
+
 
 
   // router.post("/api/VnPay", userController.handleVnPay);
