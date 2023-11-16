@@ -92,6 +92,9 @@ const initWebRoutes = (app) => {
   router.post("/api/Sendemail", userController.handleSendmail);
   router.post("/api/UpdateVerifyEmail", userController.handleUpdateVerifyEmail);
 
+  router.post("/api/QuenMatKhau", userController.handleQuenMatKhau);
+  router.get("/api/verifyQuenmk", userController.handleverifyQuenmk)
+  router.post("/api/UpdateMatkhau", userController.handleUpdateMatkhau);
 
 
   // router.post("/api/VnPay", userController.handleVnPay);

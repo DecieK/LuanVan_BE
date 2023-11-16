@@ -101,7 +101,7 @@ let handleDangky = (data) => {
 
           bcrypt.hash(data.email_KH, parseInt(process.env.BCRYPT_SALT_ROUND)).then((hashedEmail) => {
             console.log(`${process.env.APP_URL}/verify?email=${data.email_KH}&token=${hashedEmail}`);
-            emailService.sendEmail(data.email_KH, "Verify Email", `<a href="${process.env.URL_REACT}/api/verify?email=${data.email_KH}&token=${hashedEmail}"> Verify </a>`)
+            emailService.sendEmail(data.email_KH, "Verify Email", `<a href="${process.env.URL_REACT}/api/verify?email=${data.email_KH}&token=${hashedEmail}"> Ấn vào đây để xác nhận email </a>`)
           });
 
           resovle({
@@ -1833,7 +1833,7 @@ let handleThemTTNhanvien = (data) => {
         });
       } else {
 
-        await emailService.sendEmail('luongvukhoa572001@gmail.com')
+        // await emailService.sendEmail('luongvukhoa572001@gmail.com')
 
         await db.nhanviens.create({
           Hten_NV: data.hten_nv,
@@ -2218,9 +2218,111 @@ let handleUpdateVerifyEmail = (email) => {
   });
 };
 
+let handleQuenMatKhau = (data) => {
 
+  return new Promise(async (resovle, reject) => {
+    try {
+      if (
 
+        !data.email
+        // 0 === 1
+      ) {
+        resovle({
+          errCode: 1,
+          errMessage: "Missing parameter nv",
+        });
+      } else {
 
+        let kh = await db.khachhangs.findOne({
+          where: {
+            Email_KH: data.email
+          },
+          raw: false,
+        });
+        if (kh) {
+          bcrypt.hash(data.email, parseInt(process.env.BCRYPT_SALT_ROUND)).then((hashedEmail) => {
+            console.log(`${process.env.APP_URL}/verify?email=${data.email}&token=${hashedEmail}`);
+            emailService.sendEmail(data.email, "Xác nhận email để cập nhật mật khẩu ", `<a href="${process.env.URL_REACT}/api/verifyQuenmk?email=${data.email}&token=${hashedEmail}"> Ấn vào đây để xác nhận email </a>`)
+          });
+        } else {
+          resovle({
+            errCode: 1,
+            errMessage: "Tài khoản không tồn tại",
+          });
+        }
+        resovle({
+          errCode: 0,
+          errMessage: "Đã gửi email xác nhận",
+        });
+      }
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+let handleverifyQuenmk = (email, token) => {
+  return new Promise(async (resovle, reject) => {
+    try {
+      bcrypt.compare(email, token, async (err, result) => {
+        console.log(email)
+        if (result == true) {
+          // await handleUpdateMatkhau(email)
+          resovle({
+            errCode: 0,
+            errMessage: "Xác nhận email thành công",
+          });
+        } else {
+          resovle({
+            errCode: 1,
+            errMessage: "Xác nhận email không thành công",
+          });
+        }
+      })
+      resovle({
+        errCode: 0,
+        errMessage: "Xác nhận email thành công",
+      });
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
+let handleUpdateMatkhau = (data) => {
+  return new Promise(async (resovle, reject) => {
+    try {
+      let khachhang = await db.khachhangs.findOne({
+        where: {
+          // Email_KH: '?' + email ||
+          Email_KH: data.email
+        },
+        raw: false,
+
+      })
+
+      if (khachhang) {
+        // console.log("email", khachhang.Email_KH)
+
+        khachhang.Matkhau_KH = data.matkhau
+        await khachhang.save()
+      }else{
+        resovle({
+          errCode: 1,
+          errMessage: "Cập nhật mật khẩu Không thành công",
+        });
+      }
+      // redirect('http://localhost:3000/login')
+
+      resovle({
+        errCode: 0,
+        errMessage: "Cập nhật mật khẩu thành công",
+      });
+      // }
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
 module.exports = {
   handleDangnhap: handleDangnhap,
   handleDangky: handleDangky,
@@ -2283,8 +2385,9 @@ module.exports = {
   handleSendmail: handleSendmail,
   handleVerify: handleVerify,
   handleUpdateVerifyEmail: handleUpdateVerifyEmail,
-
-
+  handleQuenMatKhau: handleQuenMatKhau,
+  handleverifyQuenmk: handleverifyQuenmk,
+  handleUpdateMatkhau: handleUpdateMatkhau,
 
 
 

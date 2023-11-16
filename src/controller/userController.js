@@ -1028,7 +1028,52 @@ let handleUpdateVerifyEmail = async (req, res) => {
 };
 
 
+let handleQuenMatKhau = async (req, res) => {
+  try {
+    let quenmk = await userService.handleQuenMatKhau(req.body);
+    return res.status(200).json(quenmk);
+  } catch (e) {
+    console.log(e);
+    return res.status(200).json({
+      errCode: -1,
+      errMessage: "Error from the server",
+    });
+  }
+};
+let handleverifyQuenmk = async (req, res) => {
+  let email = req.query.email;
+  let token = req.query.token;
 
+  if (!email || !token) {
+    return res.status(200).json({
+      errCode: 1,
+      errMessage: "missing require parameters",
+      khuyenmais: {},
+    });
+  }
+
+  let verify = await userService.handleverifyQuenmk(email, token);
+  return res.redirect(`http://localhost:3000/capnhatmatkhau?email=${email}`)
+  return res.status(200).json({
+    errCode: 0,
+    errMessage: "ok",
+    verify,
+
+  });
+};
+let handleUpdateMatkhau = async (req, res) => {
+  try {
+    let quenmk = await userService.handleUpdateMatkhau(req.body);
+    // return res.redirect('http://localhost:3000/login')
+    return res.status(200).json(quenmk);
+  } catch (e) {
+    console.log(e);
+    return res.status(200).json({
+      errCode: -1,
+      errMessage: "Error from the server",
+    });
+  }
+};
 module.exports = {
   handleDangnhap: handleDangnhap,
   handleDangky: handleDangky,
@@ -1092,4 +1137,7 @@ module.exports = {
   handleSendmail: handleSendmail,
   handleVerify: handleVerify,
   handleUpdateVerifyEmail: handleUpdateVerifyEmail,
+  handleQuenMatKhau: handleQuenMatKhau,
+  handleverifyQuenmk: handleverifyQuenmk,
+  handleUpdateMatkhau:handleUpdateMatkhau,
 };
