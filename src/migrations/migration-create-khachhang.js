@@ -44,6 +44,7 @@ module.exports = {
       Matkhau_KH: {
         type: Sequelize.STRING,
       },
+     
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

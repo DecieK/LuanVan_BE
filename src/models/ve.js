@@ -49,7 +49,8 @@ module.exports = (sequelize, DataTypes) => {
       id_KM: DataTypes.INTEGER,
       id_NV: DataTypes.INTEGER,
       maCode: DataTypes.STRING,
-
+      MaGD: DataTypes.INTEGER,
+      ThoigianGD: DataTypes.STRING,
     },
     {
       sequelize,

@@ -17,14 +17,15 @@ module.exports = (sequelize, DataTypes) => {
       Sdt_KH: DataTypes.STRING,
       Email_KH: DataTypes.STRING,
       Ngaysinh_KH: DataTypes.DATEONLY,
-      Tuoi_KH: DataTypes.STRING,
+      Tuoi_KH: DataTypes.INTEGER,
       Diachi_KH: DataTypes.STRING,
       Gioitinh_KH: DataTypes.STRING,
       Cccd_KH: DataTypes.STRING,
       Mathethanhvien_KH: DataTypes.STRING,
-      Diemtichluy_KH: DataTypes.STRING,
+      Diemtichluy_KH: DataTypes.INTEGER,
       // Taikhoan_KH: DataTypes.STRING,
       Matkhau_KH: DataTypes.STRING,
+
     },
     {
       sequelize,

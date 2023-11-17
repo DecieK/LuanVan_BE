@@ -48,7 +48,12 @@ module.exports = {
         // allowNull: false,
         type: Sequelize.STRING,
       },
-
+      MaGD: {
+        type: Sequelize.INTEGER,
+      },
+      ThoigianGD: {
+        type: Sequelize.STRING,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

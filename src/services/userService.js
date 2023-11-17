@@ -98,6 +98,7 @@ let handleDangky = (data) => {
             Cccd_KH: data.cccd_KH,
             // Taikhoan_KH: data.taikhoan_KH,
             Matkhau_KH: data.matkhau_KH,
+
           });
 
           bcrypt.hash(data.email_KH, parseInt(process.env.BCRYPT_SALT_ROUND)).then((hashedEmail) => {
@@ -156,6 +157,25 @@ let handleDatve = (data) => {
         });
       } else {
 
+        //tạo chuỗi ngẫu nhiên
+        let result = '';
+
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        const CreateString = async () => {
+          const charactersLength = characters.length;
+          for (let i = 0; i < 10; i++) {
+            result += characters.charAt(Math.floor(Math.random() * charactersLength));
+          }
+          // console.log("ressult", result)
+          return result;
+        }
+        CreateString()
+
+
+
+
+        // await handleDatve(data)
+        // console.log('thoigian',data.thoigiangd)
         await db.ves.create({
           // id_KH: 5,
           Hten_KH: data.hten_KH,
@@ -170,6 +190,9 @@ let handleDatve = (data) => {
           id_cumrap: data.id_cumrap,
           id_KM: data.id_KM,
           id_NV: data.id_NV,
+          maCode: result,
+          MaGD: data.magd,
+          ThoigianGD: data.thoigiangd
           // id_DA: data.id_doan
         });
         let n_id = await db.ves.max('id'); // 40
@@ -227,26 +250,43 @@ let handleDatve = (data) => {
           },
           // raw : false
         });
-        // console.log('phim.tenphim',phim.tenphim)
+        let danhsachghe = ''
+        for (let index2 = 0; index2 < data.soluongghe; index2++) {
+          let ghe = await db.ghes.findOne({
+            where: {
+              id: data.id_ghe[index2]
+            }
+          });
+          if(ghe){
+            danhsachghe+=', '+ghe.maGhe
+          }
+        }
+
+
+        // console.log('danhsachghe', danhsachghe.slice(2,danhsachghe.length))
 
         emailService.sendEmail(khachhang.Email_KH, "Thông báo đặt vé xem phim ",
           `<h1>Xin chào ${khachhang.Hten_KH}, </h1>
-        <p>Cảm ơn bạn đã sử dụng dịch vụ của CGV!</p>
-        <p>CGV xác nhận bạn đã đặt vé xem phim của ${cumrap.ten_tttt} thành công lúc ${ dayjs(new Date()).format("DD/MM/YYYY - HH:mm:ss A")}. </p>
-      <p>Chi tiết vé của bạn:</p>
-        <h3>Mã code: qưertyuio</h3>
-        <a>Đem mã code này đến quầy giao dịch để nhận vé</a>
-        <p>Thời gian chiếu: ${suatchieu.giobatdau} - ${dayjs(chieu.ngaychieu).format('DD/MM/YYYY')}</p>
-        <p>Phim: ${phim.tenphim}</p>
-        <p>Phòng chiếu: ${rap.ten_rap} - Ghế: ${data.id_ghe}</p>
-`
-        )
+            <p>Cảm ơn bạn đã sử dụng dịch vụ của CGV!</p>
+            <p>CGV xác nhận bạn đã đặt vé xem phim của ${cumrap.ten_tttt} thành công lúc ${ dayjs(new Date()).format("DD/MM/YYYY - HH:mm:ss A")}. </p>
+          <p>Chi tiết vé của bạn:</p>
+            <h3>Mã code: ${result}</h3>
+            <a>Đem mã code này đến quầy giao dịch để nhận vé</a>
+            <p>Thời gian chiếu: ${suatchieu.giobatdau} - ${dayjs(chieu.ngaychieu).format('DD/MM/YYYY')}</p>
+            <p>Phim: ${phim.tenphim}</p>
+            <p>Phòng chiếu: ${rap.ten_rap} - Ghế: ${danhsachghe.slice(2,danhsachghe.length)}</p>
+            `)
 
         resovle({
           errCode: 0,
           errMessage: "Đặt vé thành công",
         });
       }
+
+
+
+
+      // }
       // resovle({
       //   errCode: thongtinve,
       //   errMessage: "Đặt vé thành công",
