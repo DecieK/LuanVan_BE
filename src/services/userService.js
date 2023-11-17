@@ -5,6 +5,7 @@ import emailService from "./emailService"
 // import bcrypt, { hash } from "bcryptjs"; //hashpassword
 const bcrypt = require('bcrypt');
 import userController from "../controller/userController";
+import dayjs from "dayjs"
 
 // const salt = bcrypt.genSaltSync(10);
 
@@ -189,6 +190,58 @@ let handleDatve = (data) => {
             });
           }
         }
+        let khachhang = await db.khachhangs.findOne({
+          where: {
+            id: data.id_KH
+          },
+          // raw : false
+        });
+        let cumrap = await db.qlcumraps.findOne({
+          where: {
+            id: data.id_cumrap
+          },
+          // raw : false
+        });
+        let chieu = await db.chieus.findOne({
+          where: {
+            id: data.id_chieu
+          },
+          // raw : false
+        });
+        let suatchieu = await db.suatchieus.findOne({
+          where: {
+            id: data.id_suatchieu
+          },
+          // raw : false
+        });
+        // console.log('chieu.id_phim',chieu.id_phim)
+        let phim = await db.phims.findOne({
+          where: {
+            id: chieu.id_phim
+          },
+          // raw : false
+        });
+        let rap = await db.raps.findOne({
+          where: {
+            id: data.id_rap
+          },
+          // raw : false
+        });
+        // console.log('phim.tenphim',phim.tenphim)
+
+        emailService.sendEmail(khachhang.Email_KH, "Thông báo đặt vé xem phim ",
+          `<h1>Xin chào ${khachhang.Hten_KH}, </h1>
+        <p>Cảm ơn bạn đã sử dụng dịch vụ của CGV!</p>
+        <p>CGV xác nhận bạn đã đặt vé xem phim của ${cumrap.ten_tttt} thành công lúc ${ dayjs(new Date()).format("DD/MM/YYYY - HH:mm:ss A")}. </p>
+      <p>Chi tiết vé của bạn:</p>
+        <h3>Mã code: qưertyuio</h3>
+        <a>Đem mã code này đến quầy giao dịch để nhận vé</a>
+        <p>Thời gian chiếu: ${suatchieu.giobatdau} - ${dayjs(chieu.ngaychieu).format('DD/MM/YYYY')}</p>
+        <p>Phim: ${phim.tenphim}</p>
+        <p>Phòng chiếu: ${rap.ten_rap} - Ghế: ${data.id_ghe}</p>
+`
+        )
+
         resovle({
           errCode: 0,
           errMessage: "Đặt vé thành công",
@@ -2305,7 +2358,7 @@ let handleUpdateMatkhau = (data) => {
 
         khachhang.Matkhau_KH = data.matkhau
         await khachhang.save()
-      }else{
+      } else {
         resovle({
           errCode: 1,
           errMessage: "Cập nhật mật khẩu Không thành công",
