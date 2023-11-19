@@ -257,8 +257,8 @@ let handleDatve = (data) => {
               id: data.id_ghe[index2]
             }
           });
-          if(ghe){
-            danhsachghe+=', '+ghe.maGhe
+          if (ghe) {
+            danhsachghe += ', ' + ghe.maGhe
           }
         }
 
@@ -391,16 +391,98 @@ let handleCapnhatTTve = (data) => {
             }
           }
 
+          let khachhang = await db.khachhangs.findOne({
+            where: {
+              id: data.id_KH
+            },
+            // raw : false
+          });
+          let cumrap = await db.qlcumraps.findOne({
+            where: {
+              id: data.id_cumrap
+            },
+            // raw : false
+          });
+          let chieu = await db.chieus.findOne({
+            where: {
+              id: data.id_chieu
+            },
+            // raw : false
+          });
+          let suatchieu = await db.suatchieus.findOne({
+            where: {
+              id: data.id_suatchieu
+            },
+            // raw : false
+          });
+          // console.log('chieu.id_phim',chieu.id_phim)
+          let phim = await db.phims.findOne({
+            where: {
+              id: chieu.id_phim
+            },
+            // raw : false
+          });
+          let rap = await db.raps.findOne({
+            where: {
+              id: data.id_rap
+            },
+            // raw : false
+          });
+          let danhsachghe = ''
+          for (let index2 = 0; index2 < data.soluongghe; index2++) {
+            let ghe = await db.ghes.findOne({
+              where: {
+                id: data.id_ghe[index2]
+              }
+            });
+            if (ghe) {
+              danhsachghe += ', ' + ghe.maGhe
+            }
+          }
+
+
+          // console.log('danhsachghe', danhsachghe.slice(2,danhsachghe.length))
+          if (ve.Tongtien > data.tongtien) {
+
+            emailService.sendEmail(khachhang.Email_KH, "Thông báo CẬP NHẬT vé xem phim ",
+              `<h1>Xin chào ${khachhang.Hten_KH}, </h1>
+              <h2>Cảm ơn bạn đã sử dụng dịch vụ của CGV!</h2>
+                <h3>Thông tin vé của bạn đã được cập nhật, tiền thừa đã được hoàn về tài khoản!!!</h3>
+                <p>CGV xác nhận bạn đã đặt vé xem phim của ${cumrap.ten_tttt} thành công lúc ${ dayjs(new Date()).format("DD/MM/YYYY - HH:mm:ss A")}. </p>
+                <p>Chi tiết vé của bạn:</p>
+                <h3>Mã code: ${data.macode}</h3>
+                <a>Đem mã code này đến quầy giao dịch để nhận vé</a>
+                <p>Thời gian chiếu: ${suatchieu.giobatdau} - ${dayjs(chieu.ngaychieu).format('DD/MM/YYYY')}</p>
+                <p>Phim: ${phim.tenphim}</p>
+                <p>Phòng chiếu: ${rap.ten_rap} - Ghế: ${danhsachghe.slice(2,danhsachghe.length)}</p>
+                `)
+          } else {
+
+            emailService.sendEmail(khachhang.Email_KH, "Thông báo CẬP NHẬT vé xem phim ",
+              `<h1>Xin chào ${khachhang.Hten_KH}, </h1>
+            <h2>Cảm ơn bạn đã sử dụng dịch vụ của CGV!</h2>
+              <p>CGV xác nhận bạn đã đặt vé xem phim của ${cumrap.ten_tttt} thành công lúc ${ dayjs(new Date()).format("DD/MM/YYYY - HH:mm:ss A")}. </p>
+              <p>Chi tiết vé của bạn:</p>
+              <h3>Mã code: ${data.macode}</h3>
+              <a>Đem mã code này đến quầy giao dịch để nhận vé</a>
+              <p>Thời gian chiếu: ${suatchieu.giobatdau} - ${dayjs(chieu.ngaychieu).format('DD/MM/YYYY')}</p>
+              <p>Phim: ${phim.tenphim}</p>
+              <p>Phòng chiếu: ${rap.ten_rap} - Ghế: ${danhsachghe.slice(2,danhsachghe.length)}</p>
+    `)
+          }
+
+
+
         } else {
           resovle({
             errCode: 1,
-            errMessage: "Cập nhật thông tin chiếu KHÔNG thành thông",
+            errMessage: "Cập nhật thông tin vé KHÔNG thành thông",
           });
         }
 
         resovle({
           errCode: 0,
-          errMessage: "Đặt vé thành công",
+          errMessage: "Cập nhật vé thành công",
         });
       }
       // resovle({
@@ -2218,6 +2300,73 @@ let handleXoaCTVe = async (id_ve) => {
   });
 };
 
+let handleHuyVe = async (id_ve) => {
+  return new Promise(async (resolve, reject) => {
+    let ctve = await db.chitietves.findAll({
+      where: {
+        id_ve: id_ve
+      },
+      raw: false
+    });
+
+    let ctda = await db.chitietdoans.findAll({
+      where: {
+        id_ve: id_ve
+      },
+      raw: false
+    });
+
+    let ve = await db.ves.findAll({
+      where: {
+        id: id_ve
+      },
+      raw: false
+    });
+
+    if (ve) {
+      await db.chitietves.destroy({
+        where: {
+          id_ve: id_ve
+        },
+      });
+      await db.chitietdoans.destroy({
+        where: {
+          id_ve: id_ve
+        },
+      });
+      await db.ves.destroy({
+        where: {
+          id: id_ve
+        },
+      });
+      // let khachhang = await db.khachhangs.findOne({
+      //   where: {
+      //     id: ve.id_KH
+      //   },
+      //   raw : false
+      // });
+
+      // emailService.sendEmail(khachhang.Email_KH, "Thông báo hủy vé xem phim ",
+      //   `<h1>Xin chào ${khachhang.Hten_KH}, </h1>
+      //   <h3>Vé của bạn đã được hủy. Tiền đã được hoàn về số tài khoản thanh toán khi đặt</h3>
+    
+      //   `)
+    } else {
+      resolve({
+        errCode: 2,
+        errMessage: `Không tìm thấy Chi tiet do ve`,
+      });
+    }
+
+
+
+    resolve({
+      errCode: 0,
+      message: "Thông tin nChi tiet do ve đã xóa",
+    });
+  });
+};
+
 
 let handleSendmail = (data) => {
 
@@ -2481,7 +2630,7 @@ module.exports = {
   handleQuenMatKhau: handleQuenMatKhau,
   handleverifyQuenmk: handleverifyQuenmk,
   handleUpdateMatkhau: handleUpdateMatkhau,
-
+  handleHuyVe: handleHuyVe
 
 
 };

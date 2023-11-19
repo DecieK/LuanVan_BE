@@ -959,7 +959,17 @@ let handleXoaCTVe = async (req, res) => {
   console.log(message);
   return res.status(200).json(message);
 }
-
+let handleHuyVe = async (req, res) => {
+  if (!req.body.id_ve) {
+    return res.status(200).json({
+      errCode: 1,
+      message: "missing require parameter",
+    })
+  }
+  let message = await userService.handleHuyVe(req.body.id_ve);
+  console.log(message);
+  return res.status(200).json(message);
+}
 
 
 
@@ -1140,4 +1150,5 @@ module.exports = {
   handleQuenMatKhau: handleQuenMatKhau,
   handleverifyQuenmk: handleverifyQuenmk,
   handleUpdateMatkhau:handleUpdateMatkhau,
+  handleHuyVe: handleHuyVe,
 };
