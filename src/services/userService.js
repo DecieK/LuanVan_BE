@@ -611,7 +611,7 @@ let handleTTDoan = (key) => {
     }
   });
 };
-let handleTTPhim = (key) => {
+let handleLayTTPhim = (key) => {
   return new Promise(async (resolve, reject) => {
     try {
       let phim = "";
@@ -2151,6 +2151,27 @@ let handleLayTTVe_idKH = (key) => {
     }
   });
 };
+
+
+// let handleThongke_ngay = (key) => {
+//   return new Promise(async (resolve, reject) => {
+//     try {
+//       let tk_ngay = "";
+//       tk_ngay = await db.ves.findAll({
+//         attributes: [
+//           'id',
+//           'check_in',
+//           [Sequelize.fn('sum', Sequelize.col('tongtien')), 'total_amount'],
+//         ],
+//         group: ['check_in'],
+//         raw: true
+//       });
+//       resolve(tk_ngay);
+//     } catch (e) {
+//       reject(e);
+//     }
+//   });
+// };
 let handleLayTTRap = (key) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -2575,7 +2596,7 @@ module.exports = {
   handleTTChieu: handleTTChieu,
   handleTTKM: handleTTKM,
   handleTTDoan: handleTTDoan,
-  handleTTPhim: handleTTPhim,
+  handleLayTTPhim: handleLayTTPhim,
   handleTest: handleTest,
   // handleThemTTGhe: handleThemTTGhe,
   handleTTCumrap: handleTTCumrap,
@@ -2630,7 +2651,7 @@ module.exports = {
   handleQuenMatKhau: handleQuenMatKhau,
   handleverifyQuenmk: handleverifyQuenmk,
   handleUpdateMatkhau: handleUpdateMatkhau,
-  handleHuyVe: handleHuyVe
-
+  handleHuyVe: handleHuyVe,
+  // handleThongke_ngay:handleThongke_ngay
 
 };

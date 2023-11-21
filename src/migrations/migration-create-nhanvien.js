@@ -14,6 +14,9 @@ module.exports = {
       Sdt_NV: {
         type: Sequelize.STRING,
       },
+      Email_NV: {
+        type: Sequelize.DATEONLY,
+      },
       Ngaysinh_NV: {
         type: Sequelize.DATEONLY,
       },

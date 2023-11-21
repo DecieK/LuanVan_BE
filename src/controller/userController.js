@@ -202,7 +202,7 @@ let handleTTDoan = async (req, res) => {
     doans,
   });
 };
-let handleTTPhim = async (req, res) => {
+let handleLayTTPhim = async (req, res) => {
   let key = req.query.keyword;
 
   if (!key) {
@@ -213,7 +213,7 @@ let handleTTPhim = async (req, res) => {
     });
   }
 
-  let phims = await userService.handleTTPhim(key);
+  let phims = await userService.handleLayTTPhim(key);
 
   return res.status(200).json({
     // errCode: 0,
@@ -859,6 +859,16 @@ let handleLayTTVe_idKH = async (req, res) => {
     ves,
   });
 };
+// let handleThongke_ngay = async (req, res) => {
+
+//   let tk_ngay = await userService.handleThongke_ngay(key);
+
+//   return res.status(200).json({
+//     errCode: 0,
+//     errMessage: "ok",
+//     tk_ngay,
+//   });
+// };
 
 let handleLayTTRap = async (req, res) => {
   let key = req.query.keyword;
@@ -1094,7 +1104,7 @@ module.exports = {
   handleTTChieu: handleTTChieu,
   handleTTDoan: handleTTDoan,
   handleTTKM: handleTTKM,
-  handleTTPhim: handleTTPhim,
+  handleLayTTPhim: handleLayTTPhim,
   getHomepage: getHomepage,
   handleTest: handleTest,
   // handleThemTTGhe:handleThemTTGhe,
@@ -1151,4 +1161,6 @@ module.exports = {
   handleverifyQuenmk: handleverifyQuenmk,
   handleUpdateMatkhau:handleUpdateMatkhau,
   handleHuyVe: handleHuyVe,
+  // handleThongke_ngay: handleThongke_ngay,
+
 };

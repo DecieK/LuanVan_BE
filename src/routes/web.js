@@ -23,7 +23,7 @@ const initWebRoutes = (app) => {
   router.get("/api/TTSuatchieu", userController.handleTTSuatchieu);
   router.get("/api/TTKM", userController.handleTTKM);
   router.get("/api/TTDoan", userController.handleTTDoan);
-  router.get("/api/LayTTPhim", userController.handleTTPhim);
+  router.get("/api/LayTTPhim", userController.handleLayTTPhim);
   router.post("/upload", userController.handleTest);
   router.get("/api/TTRap_idcumrap", userController.handleTTRap_idcumrap);
   router.get("/api/TTVe_idchieu", userController.handleTTVe_idchieu);
@@ -53,13 +53,13 @@ const initWebRoutes = (app) => {
   router.post("/api/ThemTTSuatchieu", userController.handleThemTTSuatchieu);
   router.post("/api/SuaTTSuatchieu", userController.handleSuaTTSuatchieu);
   router.delete("/api/XoaTTSuatchieu", userController.handleXoaTTSuatchieu);
- 
+
 
   router.post("/api/ThemTTChieu", userController.handleThemTTChieu);
   router.post("/api/SuaTTChieu", userController.handleSuaTTChieu);
   router.delete("/api/XoaTTChieu", userController.handleXoaTTChieu);
- 
- 
+
+
   router.post("/api/ThemTTDoan", userController.handleThemTTDoan);
   router.post("/api/SuaTTDoan", userController.handleSuaTTDoan);
   router.delete("/api/XoaTTDoan", userController.handleXoaTTDoan);
@@ -70,7 +70,7 @@ const initWebRoutes = (app) => {
   router.post("/api/ThemTTKhuyenmai", userController.handleThemTTKhuyenmai);
   router.post("/api/SuaTTKhuyenmai", userController.handleSuaTTKhuyenmai);
   router.delete("/api/XoaTTKhuyenmai", userController.handleXoaTTKhuyenmai);
- 
+
 
   router.get("/api/LayTTNhanvien", userController.handleLayTTNhanvien);
   router.post("/api/ThemTTNhanvien", userController.handleThemTTNhanvien);
@@ -96,6 +96,8 @@ const initWebRoutes = (app) => {
   router.post("/api/QuenMatKhau", userController.handleQuenMatKhau);
   router.get("/api/verifyQuenmk", userController.handleverifyQuenmk)
   router.post("/api/UpdateMatkhau", userController.handleUpdateMatkhau);
+
+  // router.get("/api/Thongke", userController.handleThongke);
 
 
   // router.post("/api/VnPay", userController.handleVnPay);
