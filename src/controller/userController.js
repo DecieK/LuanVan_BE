@@ -859,16 +859,25 @@ let handleLayTTVe_idKH = async (req, res) => {
     ves,
   });
 };
-// let handleThongke_ngay = async (req, res) => {
+let handleThongke_ngay = async (req, res) => {
+  let key = req.query.keyword;
 
-//   let tk_ngay = await userService.handleThongke_ngay(key);
+  if (!key) {
+    return res.status(200).json({
+      errCode: 1,
+      errMessage: "missing require parameters",
+      thongke: {},
+    });
+  }
 
-//   return res.status(200).json({
-//     errCode: 0,
-//     errMessage: "ok",
-//     tk_ngay,
-//   });
-// };
+  let thongke = await userService.handleThongke_ngay(key);
+
+  return res.status(200).json({
+    errCode: 0,
+    errMessage: "ok",
+    thongke,
+  });
+};
 
 let handleLayTTRap = async (req, res) => {
   let key = req.query.keyword;
@@ -1161,6 +1170,7 @@ module.exports = {
   handleverifyQuenmk: handleverifyQuenmk,
   handleUpdateMatkhau:handleUpdateMatkhau,
   handleHuyVe: handleHuyVe,
-  // handleThongke_ngay: handleThongke_ngay,
+  handleThongke_ngay: handleThongke_ngay
+  // handleThongke: handleThongke,
 
 };

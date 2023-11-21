@@ -6,6 +6,7 @@ import emailService from "./emailService"
 const bcrypt = require('bcrypt');
 import userController from "../controller/userController";
 import dayjs from "dayjs"
+var Sequelize = require('sequelize');
 
 // const salt = bcrypt.genSaltSync(10);
 
@@ -261,9 +262,34 @@ let handleDatve = (data) => {
             danhsachghe += ', ' + ghe.maGhe
           }
         }
+        // let danhsacnhDV = ([{
+        //   ten: String,
+        //   sl: Number,
+        //   size: String
 
+        // }])
+        let danhsacnhDV = ''
 
-        // console.log('danhsachghe', danhsachghe.slice(2,danhsachghe.length))
+        for (let index2 = 0; index2 < data.id_doan.length; index2++) {
+          if (data.id_doan[index2].sl > 0) {
+            let ttdichvu = await db.doans.findOne({
+              where: {
+                id: data.id_doan[index2].id
+              }
+            });
+            if (ttdichvu) {
+              danhsacnhDV += ', ' + ttdichvu.ten + ' size ' + data.id_doan[index2].size + ' sl: ' + data.id_doan[index2].sl
+              // danhsacnhDV.push({
+              //   ten : ttdichvu.ten,
+              //   sl: data.id_doan[index2].sl,
+              //   size: ttdichvu.size
+              // })
+            }
+          }
+        }
+
+        console.log('danhsacnhDV', danhsacnhDV.length)
+        console.log('danhsacnhDV', data.id_doan.length)
 
         emailService.sendEmail(khachhang.Email_KH, "Thông báo đặt vé xem phim ",
           `<h1>Xin chào ${khachhang.Hten_KH}, </h1>
@@ -275,6 +301,7 @@ let handleDatve = (data) => {
             <p>Thời gian chiếu: ${suatchieu.giobatdau} - ${dayjs(chieu.ngaychieu).format('DD/MM/YYYY')}</p>
             <p>Phim: ${phim.tenphim}</p>
             <p>Phòng chiếu: ${rap.ten_rap} - Ghế: ${danhsachghe.slice(2,danhsachghe.length)}</p>
+            <p>Dịch vụ: ${danhsacnhDV.slice(2,danhsacnhDV.length)}</p>
             `)
 
         resovle({
@@ -1301,9 +1328,19 @@ let handleSuaTTPhim = (data) => {
   return new Promise(async (resovle, reject) => {
     try {
       if (
-        !data.maghe ||
-        !data.loaighe ||
-        !data.idr ||
+        !data.Tenphim ||
+        !data.Dieukien ||
+        !data.Poster ||
+        !data.Trailer ||
+        !data.Dienvien ||
+        !data.Ngonngu ||
+        !data.Quocgia ||
+        !data.Tomtat ||
+        !data.Daodien ||
+        !data.Thoiluong ||
+        !data.Ngaychieu ||
+        !data.Nsx ||
+        !data.Trangthai ||
         !data.id
       ) {
         resovle({
@@ -1312,27 +1349,37 @@ let handleSuaTTPhim = (data) => {
         });
       } else {
 
-        let ghe = await db.ghes.findOne({
+        let phim = await db.phims.findOne({
           where: {
             id: data.id
           },
           raw: false,
         });
-        if (ghe) {
-          ghe.maGhe = data.maghe;
-          ghe.loaiGhe = data.loaighe;
-          ghe.id_rap = data.idr;
+        if (phim) {
+          phim.tenphim = data.Tenphim;
+          phim.dieukien = data.Dieukien;
+          phim.poster = data.Poster;
+          phim.trailer = data.Trailer;
+          phim.dienvien = data.Dienvien;
+          phim.ngonngu = data.Ngonngu;
+          phim.quocgia = data.Quocgia;
+          phim.tomtat = data.Tomtat;
+          phim.daodien = data.Daodien;
+          phim.thoiluong = data.Thoiluong;
+          phim.ngaychieu = data.Ngaychieu;
+          phim.nsx = data.Nsx;
+          phim.trangthai = data.Trangthai;
 
-          await ghe.save();
+          await phim.save();
         } else {
           resovle({
             errCode: 1,
-            errMessage: "Cập nhật thông tin ghế mới KHÔNG thành thông",
+            errMessage: "Cập nhật thông tin phim KHÔNG thành thông",
           });
         }
         resovle({
           errCode: 0,
-          errMessage: "Cập nhật thông tin ghế mới thành thông",
+          errMessage: "Cập nhật thông tin phim thành thông",
         });
       }
     } catch (e) {
@@ -1343,20 +1390,20 @@ let handleSuaTTPhim = (data) => {
 
 let handleXoaTTPhim = async (Id) => {
   return new Promise(async (resolve, reject) => {
-    let ghe = await db.ghes.findOne({
+    let phim = await db.phims.findOne({
       where: {
         id: Id
       },
     });
 
-    if (!ghe) {
+    if (!phim) {
       resolve({
         errCode: 2,
-        errMessage: `Không tìm thấy ghế`,
+        errMessage: `Không tìm thấy phim`,
       });
     }
 
-    await db.ghes.destroy({
+    await db.phims.destroy({
       where: {
         id: Id
       },
@@ -1364,7 +1411,7 @@ let handleXoaTTPhim = async (Id) => {
 
     resolve({
       errCode: 0,
-      message: "Thông tin ghế đã xóa",
+      message: "Thông tin phim đã xóa",
     });
   });
 };
@@ -1595,23 +1642,37 @@ let handleThemTTChieu = (data) => {
           errMessage: "Missing parameter",
         });
       } else {
+        let ttchieu = db.chieus.findAll({
+          where: {
+            ngaychieu: data.ngaychieu,
+            id_rap: data.idr,
+            id_suatchieu: data.idsc,
+            id_phim: data.idp
+          }
+        })
+        if (!ttchieu) {
+          await db.chieus.create({
+            ngaychieu: data.ngaychieu,
+            giave: data.giave,
+            id_rap: data.idr,
+            id_suatchieu: data.idsc,
+            id_phim: data.idp
+          });
 
-        await db.chieus.create({
-          ngaychieu: data.ngaychieu,
-          giave: data.giave,
-          id_rap: data.idr,
-          id_suatchieu: data.idsc,
-          id_phim: data.idp
-        });
-
-        resovle({
-          errCode: 0,
-          errMessage: "Thêm thông tin chiếu thành công",
-        });
+          resovle({
+            errCode: 0,
+            errMessage: "Thêm thông tin chiếu thành công",
+          });
+        } else {
+          resovle({
+            errCode: 1,
+            errMessage: "Lịch chiếu trùng lặp",
+          });
+        }
       }
       resovle({
         errCode: 0,
-        errMessage: "Thêm thông tin chiếu KHÔNG thành công",
+        errMessage: "Thêm thông tin chiếu thành công",
       });
       // }
     } catch (e) {
@@ -1644,7 +1705,16 @@ let handleSuaTTChieu = (data) => {
           },
           raw: false,
         });
-        if (chieu) {
+
+        let ttchieu = db.chieus.findAll({
+          where: {
+            ngaychieu: data.ngaychieu,
+            id_rap: data.idr,
+            id_suatchieu: data.idsc,
+            id_phim: data.idp
+          }
+        })
+        if (chieu && !ttchieu) {
           chieu.ngaychieu = data.ngaychieu;
           chieu.giave = data.giave;
           chieu.id_rap = data.idr;
@@ -2153,25 +2223,43 @@ let handleLayTTVe_idKH = (key) => {
 };
 
 
-// let handleThongke_ngay = (key) => {
-//   return new Promise(async (resolve, reject) => {
-//     try {
-//       let tk_ngay = "";
-//       tk_ngay = await db.ves.findAll({
-//         attributes: [
-//           'id',
-//           'check_in',
-//           [Sequelize.fn('sum', Sequelize.col('tongtien')), 'total_amount'],
-//         ],
-//         group: ['check_in'],
-//         raw: true
-//       });
-//       resolve(tk_ngay);
-//     } catch (e) {
-//       reject(e);
-//     }
-//   });
-// };
+let handleThongke_ngay = (key) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let ve = db.ves.findOne({
+        where: {
+          id: key
+        },
+        raw : false
+      })
+      let ttchieu = db.chieus.findOne({
+        where: {
+          id: ve.id_chieu
+        },
+        raw : false
+      })
+      let phim = db.phims.findOne({
+        where: {
+          id: ttchieu.id_phim
+        },
+        raw : false
+      })
+      let tk_ngay = "";
+      tk_ngay = await db.ves.findAll({
+        attributes: [
+          'id',
+          'check_in',
+          [Sequelize.fn('sum', Sequelize.col('tongtien')), 'total_amount'],
+        ],
+        group: ['check_in'],
+        raw: true
+      });
+      resolve(tk_ngay);
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
 let handleLayTTRap = (key) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -2370,7 +2458,7 @@ let handleHuyVe = async (id_ve) => {
       // emailService.sendEmail(khachhang.Email_KH, "Thông báo hủy vé xem phim ",
       //   `<h1>Xin chào ${khachhang.Hten_KH}, </h1>
       //   <h3>Vé của bạn đã được hủy. Tiền đã được hoàn về số tài khoản thanh toán khi đặt</h3>
-    
+
       //   `)
     } else {
       resolve({
@@ -2652,6 +2740,6 @@ module.exports = {
   handleverifyQuenmk: handleverifyQuenmk,
   handleUpdateMatkhau: handleUpdateMatkhau,
   handleHuyVe: handleHuyVe,
-  // handleThongke_ngay:handleThongke_ngay
+  handleThongke_ngay: handleThongke_ngay
 
 };
