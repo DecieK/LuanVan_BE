@@ -1245,7 +1245,7 @@ let handleThemTTPhim = (data) => {
       if (
         !data.Tenphim ||
         !data.Dieukien ||
-        !data.Poster ||
+        // !data.Poster ||
         !data.Trailer ||
         !data.Dienvien ||
         !data.Ngonngu ||
