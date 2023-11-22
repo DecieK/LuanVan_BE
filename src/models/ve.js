@@ -10,23 +10,46 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       //https://sequelize.org/docs/v6/core-concepts/assocs/
       // định danh các mối quan hệ
-      // User.belongsTo(models.Allcode, {
-      //   foreignKey: "positionId",
-      //   targetKey: "keyMap",
-      //   as: "positionData",
-      // });
-      // User.belongsTo(models.Allcode, {
+      ves.belongsTo(models.chieus, {
+        foreignKey: "id_chieu",
+        // targetKey: "keyMap",
+        // as: "positionData",
+      });
+      // ves.belongsTo(models.Allcode, {
       //   foreignKey: "gender",
       //   targetKey: "keyMap",
       //   as: "genderData",
       // });
-      // User.hasOne(models.Markdown, { foreignKey: "doctorId" });
-      // User.hasOne(models.Doctor_Infor, { foreignKey: "doctorId" });
-      // User.hasMany(models.Schedule, {
+      // ves.belongsTo(models.Allcode, {
+      //   foreignKey: "positionId",
+      //   targetKey: "keyMap",
+      //   as: "positionData",
+      // });
+      // ves.belongsTo(models.Allcode, {
+      //   foreignKey: "gender",
+      //   targetKey: "keyMap",
+      //   as: "genderData",
+      // });
+      // ves.belongsTo(models.Allcode, {
+      //   foreignKey: "positionId",
+      //   targetKey: "keyMap",
+      //   as: "positionData",
+      // });
+      // ves.belongsTo(models.Allcode, {
+      //   foreignKey: "gender",
+      //   targetKey: "keyMap",
+      //   as: "genderData",
+      // });
+
+
+
+      // ves.hasOne(models.Markdown, { foreignKey: "doctorId" });
+      // ves.hasOne(models.Doctor_Infor, { foreignKey: "doctorId" });
+      // ves.hasMany(models.Schedule, {
       //   foreignKey: "doctorId",
       //   as: "doctorData",
       // });
-      // User.hasMany(models.Booking, {
+      // ves.hasMany(models.Booking, {
       //   foreignKey: "patientId",
       //   as: "patientData",
       // });

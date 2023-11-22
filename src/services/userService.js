@@ -2226,59 +2226,33 @@ let handleLayTTVe_idKH = (key) => {
 let handleThongke_ngay = (key) => {
   return new Promise(async (resolve, reject) => {
     try {
-      // let ve = db.ves.findOne({
-      //   where: {
-      //     id: key
-      //   },
-      //   raw: false
-      // })
-      // let ttchieu = db.chieus.findOne({
-      //   where: {
-      //     id: ve.id_chieu
-      //   },
-      //   raw: false
-      // })
-      // let phim = db.phims.findOne({
-      //   where: {
-      //     id: ttchieu.id_phim
-      //   },
-      //   raw: false
-      // })
-      // let tk_ngay = "";
-      // tk_ngay = await db.ves.findAll({
-      //   include: [
-      //     {model:db.chieus, attributes:['id']},
-      //     // {model:db.Periods, attributes:['DisplayLabel']},
-      //     // {model:db.Subjects, attributes:['Name']}   
-      // ],
-      //   attributes: [
-      //     'id',
-      //     'check_in',
-      //     [Sequelize.fn('sum', Sequelize.col('tongtien')), 'total_amount'],
-      //   ],
-      //   group: ['check_in'],
-      //   raw: true
-      // });
-      let tk_ngay = await db.ves.findAll({
-        include: {
-          model: db.chieus,
-          // as: 'tags',
-          required: true
-        },
+
+      let tk_ngay = await db.ves.findOne({
         // where: {
-        //   [Op.or]: [{
-        //       'product_name': {
-        //         [Op.like]: '%coca%'
-        //       }
-        //     },
-        //     {
-        //       '$tags.tag_name$': {
-        //         [Op.like]: '%sod%'
-        //       }
-        //     }
-        //   ]
-        // }
-      })
+        //   id: key
+        // },
+        attributes: [
+          'id',
+          // '',
+          // exclude: ['tongtien'],
+          // [Sequelize.fn('sum', Sequelize.col('db.ves.tongtien')), 'total_amount'],
+          [Sequelize.fn('SUM', Sequelize.col('Tongtien')), 'total_amount']
+
+        ],
+        include: [{
+            model: db.chieus,
+            // attributes: []
+
+          },
+          // {model:db.Periods, attributes:['DisplayLabel']},
+          // {model:db.Subjects, attributes:['Name']}   
+        ],
+        group: ['chieu.ngaychieu'],
+        // group: ['CustomerAccount.uuid']
+        raw: true,
+        nest: true
+      });
+
       resolve(tk_ngay);
     } catch (e) {
       reject(e);
