@@ -1642,14 +1642,17 @@ let handleThemTTChieu = (data) => {
           errMessage: "Missing parameter",
         });
       } else {
-        let ttchieu = db.chieus.findAll({
+        let ttchieu = await db.chieus.findOne({
           where: {
             ngaychieu: data.ngaychieu,
             id_rap: data.idr,
             id_suatchieu: data.idsc,
             id_phim: data.idp
-          }
+          },
+          raw: false,
         })
+        console.log('ada', ttchieu)
+
         if (!ttchieu) {
           await db.chieus.create({
             ngaychieu: data.ngaychieu,
@@ -1665,7 +1668,7 @@ let handleThemTTChieu = (data) => {
           });
         } else {
           resovle({
-            errCode: 1,
+            errCode: 111,
             errMessage: "Lịch chiếu trùng lặp",
           });
         }
@@ -1706,15 +1709,19 @@ let handleSuaTTChieu = (data) => {
           raw: false,
         });
 
-        let ttchieu = db.chieus.findAll({
+        let ttchieu = await db.chieus.findAll({
           where: {
             ngaychieu: data.ngaychieu,
             id_rap: data.idr,
             id_suatchieu: data.idsc,
             id_phim: data.idp
-          }
+          },
+          raw: false,
+
         })
-        if (chieu && !ttchieu) {
+
+
+        if (chieu && ttchieu.length === 0) {
           chieu.ngaychieu = data.ngaychieu;
           chieu.giave = data.giave;
           chieu.id_rap = data.idr;
@@ -2227,7 +2234,7 @@ let handleThongke_ngay = (key) => {
   return new Promise(async (resolve, reject) => {
     try {
 
-      let tk_ngay = await db.ves.findOne({
+      let tk_ngay = await db.ves.findAll({
         // where: {
         //   id: key
         // },
@@ -2248,6 +2255,94 @@ let handleThongke_ngay = (key) => {
           // {model:db.Subjects, attributes:['Name']}   
         ],
         group: ['chieu.ngaychieu'],
+        // group: ['CustomerAccount.uuid']
+        raw: true,
+        nest: true
+      });
+
+      resolve(tk_ngay);
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
+let handleThongke_phim = (key) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+
+      let tk_ngay = await db.ves.findAll({
+
+        // attributes: [
+        //   // 'total_amount',
+        //   // '',
+        //   // exclude: ['tongtien'],
+        //   // [Sequelize.fn('SUM', Sequelize.col('Tongtien')), 'total_amount']
+
+        // ],
+        include: [{
+          model: db.chieus,
+          attributes: [
+            'id',
+            // 'total_amount',
+            // '',
+            // exclude: ['tongtien'],
+
+          ],
+          include: [{
+              model: db.phims,
+              // attributes: []
+              attributes: [
+                [Sequelize.fn('SUM', Sequelize.col('ves.Tongtien')), 'total_amount'],
+
+              ],
+              group: ['chieus.id_phim'],
+
+            },
+
+            // {model:db.Periods, attributes:['DisplayLabel']},
+            // {model:db.Subjects, attributes:['Name']}   
+          ],
+          group: ['phims.id'],
+
+        }, ],
+
+        raw: true,
+        nest: true
+      });
+
+      resolve(tk_ngay);
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
+let handleThongke_cumrap = (key) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+
+      let tk_ngay = await db.ves.findAll({
+        // where: {
+        //   id: key
+        // },
+        attributes: [
+          'id',
+          // '',
+          // exclude: ['tongtien'],
+          // [Sequelize.fn('sum', Sequelize.col('db.ves.tongtien')), 'total_amount'],
+          [Sequelize.fn('SUM', Sequelize.col('Tongtien')), 'total_amount']
+
+        ],
+        include: [{
+            model: db.qlcumraps,
+            // attributes: []
+
+          },
+          // {model:db.Periods, attributes:['DisplayLabel']},
+          // {model:db.Subjects, attributes:['Name']}   
+        ],
+        group: ['qlcumrap.id'],
         // group: ['CustomerAccount.uuid']
         raw: true,
         nest: true
@@ -2739,6 +2834,9 @@ module.exports = {
   handleverifyQuenmk: handleverifyQuenmk,
   handleUpdateMatkhau: handleUpdateMatkhau,
   handleHuyVe: handleHuyVe,
-  handleThongke_ngay: handleThongke_ngay
+  handleThongke_ngay: handleThongke_ngay,
+  handleThongke_phim: handleThongke_phim,
+  handleThongke_cumrap: handleThongke_cumrap,
+
 
 };

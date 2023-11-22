@@ -878,6 +878,44 @@ let handleThongke_ngay = async (req, res) => {
     thongke,
   });
 };
+let handleThongke_phim = async (req, res) => {
+  let key = req.query.keyword;
+
+  if (!key) {
+    return res.status(200).json({
+      errCode: 1,
+      errMessage: "missing require parameters",
+      thongke_phim: {},
+    });
+  }
+
+  let thongke_phim = await userService.handleThongke_phim(key);
+
+  return res.status(200).json({
+    errCode: 0,
+    errMessage: "ok",
+    thongke_phim,
+  });
+};
+let handleThongke_cumrap = async (req, res) => {
+  let key = req.query.keyword;
+
+  if (!key) {
+    return res.status(200).json({
+      errCode: 1,
+      errMessage: "missing require parameters",
+      thongke_cumrap: {},
+    });
+  }
+
+  let thongke_cumrap = await userService.handleThongke_cumrap(key);
+
+  return res.status(200).json({
+    errCode: 0,
+    errMessage: "ok",
+    thongke_cumrap,
+  });
+};
 
 let handleLayTTRap = async (req, res) => {
   let key = req.query.keyword;
@@ -1170,7 +1208,9 @@ module.exports = {
   handleverifyQuenmk: handleverifyQuenmk,
   handleUpdateMatkhau:handleUpdateMatkhau,
   handleHuyVe: handleHuyVe,
-  handleThongke_ngay: handleThongke_ngay
+  handleThongke_ngay: handleThongke_ngay,
+  handleThongke_phim: handleThongke_phim,
+  handleThongke_cumrap: handleThongke_cumrap,
   // handleThongke: handleThongke,
 
 };

@@ -98,6 +98,8 @@ const initWebRoutes = (app) => {
   router.post("/api/UpdateMatkhau", userController.handleUpdateMatkhau);
 
   router.get("/api/Thongke", userController.handleThongke_ngay);
+  router.get("/api/Thongke_phim", userController.handleThongke_phim);
+  router.get("/api/Thongke_cumrap", userController.handleThongke_cumrap);
 
 
   // router.post("/api/VnPay", userController.handleVnPay);

@@ -15,11 +15,11 @@ module.exports = (sequelize, DataTypes) => {
         // targetKey: "keyMap",
         // as: "positionData",
       });
-      // ves.belongsTo(models.Allcode, {
-      //   foreignKey: "gender",
-      //   targetKey: "keyMap",
-      //   as: "genderData",
-      // });
+      ves.belongsTo(models.qlcumraps, {
+        foreignKey: "id_cumrap",
+        // targetKey: "keyMap",
+        // as: "genderData",
+      });
       // ves.belongsTo(models.Allcode, {
       //   foreignKey: "positionId",
       //   targetKey: "keyMap",

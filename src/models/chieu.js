@@ -13,6 +13,11 @@ module.exports = (sequelize, DataTypes) => {
         // targetKey: "keyMap",
         // as: "positionData",
       });
+      chieus.belongsTo(models.phims, {
+        foreignKey: "id_phim",
+        // targetKey: "keyMap",
+        // as: "positionData",
+      });
     }
   }
   chieus.init(
