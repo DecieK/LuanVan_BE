@@ -100,7 +100,13 @@ const initWebRoutes = (app) => {
   router.get("/api/Thongke", userController.handleThongke_ngay);
   router.get("/api/Thongke_phim", userController.handleThongke_phim);
   router.get("/api/Thongke_cumrap", userController.handleThongke_cumrap);
+  router.get("/api/Thongke_thang", userController.handleThongke_thang);
+  router.get("/api/Thongke_tuan", userController.handleThongke_tuan);
 
+  router.get("/api/kiemtrataikhoan", userController.handleKiemtrataikhoan);
+
+
+  router.post("/api/CapnhatTTCanhan", userController.handleCapnhatTTCanhan);
 
   // router.post("/api/VnPay", userController.handleVnPay);
 
@@ -109,7 +115,7 @@ const initWebRoutes = (app) => {
 
 module.exports = initWebRoutes;
 
-//them chổ loaiphim
+//them chổ loaiphim 
 
 //sua BE them phim
 // Deploy nextjs xong mới sử dụng api vnpay được

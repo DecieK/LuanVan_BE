@@ -916,6 +916,45 @@ let handleThongke_cumrap = async (req, res) => {
     thongke_cumrap,
   });
 };
+let handleThongke_thang = async (req, res) => {
+  let key = req.query.keyword;
+
+  if (!key) {
+    return res.status(200).json({
+      errCode: 1,
+      errMessage: "missing require parameters",
+      thongke: {},
+    });
+  }
+
+  let thongke = await userService.handleThongke_thang(key);
+
+  return res.status(200).json({
+    errCode: 0,
+    errMessage: "ok",
+    thongke,
+  });
+};
+let handleThongke_tuan = async (req, res) => {
+  let key = req.query.keyword;
+
+  if (!key) {
+    return res.status(200).json({
+      errCode: 1,
+      errMessage: "missing require parameters",
+      thongke: {},
+    });
+  }
+
+  let thongke = await userService.handleThongke_tuan(key);
+
+  return res.status(200).json({
+    errCode: 0,
+    errMessage: "ok",
+    thongke,
+  });
+};
+
 
 let handleLayTTRap = async (req, res) => {
   let key = req.query.keyword;
@@ -1071,12 +1110,12 @@ let handleVerify = async (req, res) => {
 
   let verify = await userService.handleVerify(email, token);
   return res.redirect('http://localhost:3000/login')
-  return res.status(200).json({
-    errCode: 0,
-    errMessage: "ok",
-    verify,
+  // return res.status(200).json({
+  //   errCode: 0,
+  //   errMessage: "ok",
+  //   verify,
 
-  });
+  // });
 };
 
 let handleUpdateVerifyEmail = async (req, res) => {
@@ -1141,7 +1180,44 @@ let handleUpdateMatkhau = async (req, res) => {
     });
   }
 };
+
+
+let handleKiemtrataikhoan = async (req, res) => {
+  let key = req.query.keyword;
+
+  if (!key) {
+    return res.status(200).json({
+      errCode: 1,
+      errMessage: "missing require parameters",
+      check: {},
+    });
+  }
+
+  let check = await userService.handleKiemtrataikhoan(key);
+
+  return res.status(200).json({
+    // errCode: 0,
+    // errMessage: "ok",
+    check,
+  });
+};
+
+let handleCapnhatTTCanhan = async (req, res) => {
+  try {
+    let khachhang = await userService.handleCapnhatTTCanhan(req.body);
+    return res.status(200).json(khachhang);
+  } catch (e) {
+    console.log(e);
+    return res.status(200).json({
+      errCode: -1,
+      errMessage: "Error from the server",
+    });
+  }
+};
+
 module.exports = {
+  handleCapnhatTTCanhan: handleCapnhatTTCanhan,
+  handleKiemtrataikhoan: handleKiemtrataikhoan,
   handleDangnhap: handleDangnhap,
   handleDangky: handleDangky,
   handleDatve: handleDatve,
@@ -1211,6 +1287,7 @@ module.exports = {
   handleThongke_ngay: handleThongke_ngay,
   handleThongke_phim: handleThongke_phim,
   handleThongke_cumrap: handleThongke_cumrap,
-  // handleThongke: handleThongke,
+  handleThongke_thang: handleThongke_thang,
+  handleThongke_tuan: handleThongke_tuan,
 
 };

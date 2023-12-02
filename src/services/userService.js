@@ -66,7 +66,6 @@ let handleDangky = (data) => {
         !data.cccd_KH ||
         !data.email_KH ||
         !data.diachi_KH ||
-        // !data.taikhoan_KH ||
         !data.matkhau_KH
       ) {
         resovle({
@@ -76,23 +75,30 @@ let handleDangky = (data) => {
       } else {
         let khachhang = await db.khachhangs.findOne({
           where: {
-            Hten_KH: data.hten_KH,
+            // Hten_KH: data.hten_KH,
             Email_KH: data.email_KH,
-            Sdt_KH: data.sdt_KH,
+            // Sdt_KH: data.sdt_KH,
+          },
+        });
+        let khachhang1 = await db.khachhangs.findOne({
+          where: {
+            // Hten_KH: data.hten_KH,
+            Email_KH: '?' + data.email_KH,
+            // Sdt_KH: data.sdt_KH,
           },
         });
 
-        if (khachhang) {
+        if (khachhang || khachhang1) {
           resovle({
             errCode: 1,
-            errMessage: "Người dùng đã có tài khoản",
+            errMessage: "Email đã được sử dụng ở tài khoản khác",
           });
         } else {
           await db.khachhangs.create({
             // id_KH: 5,
             Hten_KH: data.hten_KH,
             Sdt_KH: data.sdt_KH,
-            Email_KH: '?' + data.email_KH,
+            Email_KH: data.email_KH,
             Ngaysinh_KH: data.Ngaysinh,
             Diachi_KH: data.diachi_KH,
             Gioitinh_KH: data.gt_KH,
@@ -102,10 +108,10 @@ let handleDangky = (data) => {
 
           });
 
-          bcrypt.hash(data.email_KH, parseInt(process.env.BCRYPT_SALT_ROUND)).then((hashedEmail) => {
-            console.log(`${process.env.APP_URL}/verify?email=${data.email_KH}&token=${hashedEmail}`);
-            emailService.sendEmail(data.email_KH, "Verify Email", `<a href="${process.env.URL_REACT}/api/verify?email=${data.email_KH}&token=${hashedEmail}"> Ấn vào đây để xác nhận email </a>`)
-          });
+          // bcrypt.hash(data.email_KH, parseInt(process.env.BCRYPT_SALT_ROUND)).then((hashedEmail) => {
+          //   console.log(`${process.env.APP_URL}/verify?email=${data.email_KH}&token=${hashedEmail}`);
+          //   emailService.sendEmail(data.email_KH, "Verify Email", `<a href="${process.env.URL_REACT}/api/verify?email=${data.email_KH}&token=${hashedEmail}"> Ấn vào đây để xác nhận email </a>`)
+          // });
 
           resovle({
             errCode: 0,
@@ -2096,9 +2102,9 @@ let handleThemTTNhanvien = (data) => {
           Gioitinh_NV: data.gioitinh_nv,
           Cccd_NV: data.cccd_nv,
           Chucvu_NV: data.chucvu_nv,
-          // Taikhoan_NV: data.taikhoan_nv,
-          // Matkhau_NV: data.matkhau_nv,
-        });
+          Email_NV: data.taikhoan_nv,
+          Matkhau_NV: data.matkhau_nv,
+        }); 
 
         resovle({
           errCode: 0,
@@ -2156,8 +2162,8 @@ let handleSuaTTNhanvien = (data) => {
           nhanvien.Gioitinh_NV = data.gioitinh_nv;
           nhanvien.Cccd_NV = data.cccd_nv;
           nhanvien.Chucvu_NV = data.chucvu_nv;
-          // nhanvien.Taikhoan_NV = data.taikhoan_nv;
-          // nhanvien.Matkhau_NV = data.matkhau_nv;
+          nhanvien.Email_NV= data.taikhoan_nv,
+          nhanvien.Matkhau_NV= data.matkhau_nv,
 
           await nhanvien.save();
         } else {
@@ -2235,27 +2241,16 @@ let handleThongke_ngay = (key) => {
     try {
 
       let tk_ngay = await db.ves.findAll({
-        // where: {
-        //   id: key
-        // },
         attributes: [
           'id',
-          // '',
           // exclude: ['tongtien'],
-          // [Sequelize.fn('sum', Sequelize.col('db.ves.tongtien')), 'total_amount'],
           [Sequelize.fn('SUM', Sequelize.col('Tongtien')), 'total_amount']
 
         ],
         include: [{
-            model: db.chieus,
-            // attributes: []
-
-          },
-          // {model:db.Periods, attributes:['DisplayLabel']},
-          // {model:db.Subjects, attributes:['Name']}   
-        ],
+          model: db.chieus,
+        }, ],
         group: ['chieu.ngaychieu'],
-        // group: ['CustomerAccount.uuid']
         raw: true,
         nest: true
       });
@@ -2272,41 +2267,25 @@ let handleThongke_phim = (key) => {
     try {
 
       let tk_ngay = await db.ves.findAll({
+        attributes: [
+          'id',
+          // exclude: ['tongtien'],
+          [Sequelize.fn('SUM', Sequelize.col('Tongtien')), 'total_amount']
 
-        // attributes: [
-        //   // 'total_amount',
-        //   // '',
-        //   // exclude: ['tongtien'],
-        //   // [Sequelize.fn('SUM', Sequelize.col('Tongtien')), 'total_amount']
-
-        // ],
+        ],
         include: [{
           model: db.chieus,
           attributes: [
             'id',
-            // 'total_amount',
-            // '',
             // exclude: ['tongtien'],
+            [Sequelize.fn('SUM', Sequelize.col('Tongtien')), 'total_amount']
 
           ],
           include: [{
-              model: db.phims,
-              // attributes: []
-              attributes: [
-                [Sequelize.fn('SUM', Sequelize.col('ves.Tongtien')), 'total_amount'],
-
-              ],
-              group: ['chieus.id_phim'],
-
-            },
-
-            // {model:db.Periods, attributes:['DisplayLabel']},
-            // {model:db.Subjects, attributes:['Name']}   
-          ],
-          group: ['phims.id'],
-
+            model: db.phims,
+          }, ],
         }, ],
-
+        group: ['chieu.id_phim'],
         raw: true,
         nest: true
       });
@@ -2354,6 +2333,61 @@ let handleThongke_cumrap = (key) => {
     }
   });
 };
+let handleThongke_thang = (key) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+
+      let tk_ngay = await db.ves.findAll({
+        attributes: [
+          'id',
+          // exclude: ['tongtien'],
+          [Sequelize.fn("MONTH", db.sequelize.col("chieu.ngaychieu")), "month"],
+
+          [Sequelize.fn('SUM', Sequelize.col('Tongtien')), 'total_amount']
+
+        ],
+        include: [{
+          model: db.chieus,
+        }, ],
+        group: ['month'],
+        raw: true,
+        nest: true
+      });
+
+      resolve(tk_ngay);
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+let handleThongke_tuan = (key) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+
+      let tk_ngay = await db.ves.findAll({
+        attributes: [
+          'id',
+          // exclude: ['tongtien'],
+          [Sequelize.fn('WEEKOFYEAR', db.sequelize.col('chieu.ngaychieu')), "week"],
+
+          [Sequelize.fn('SUM', Sequelize.col('Tongtien')), 'total_amount']
+
+        ],
+        include: [{
+          model: db.chieus,
+        }, ],
+        group: ['week'],
+        raw: true,
+        nest: true
+      });
+
+      resolve(tk_ngay);
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
 let handleLayTTRap = (key) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -2519,7 +2553,7 @@ let handleHuyVe = async (id_ve) => {
       raw: false
     });
 
-    let ve = await db.ves.findAll({
+    let ve = await db.ves.findOne({
       where: {
         id: id_ve
       },
@@ -2527,33 +2561,33 @@ let handleHuyVe = async (id_ve) => {
     });
 
     if (ve) {
-      await db.chitietves.destroy({
-        where: {
-          id_ve: id_ve
-        },
-      });
-      await db.chitietdoans.destroy({
-        where: {
-          id_ve: id_ve
-        },
-      });
-      await db.ves.destroy({
-        where: {
-          id: id_ve
-        },
-      });
-      // let khachhang = await db.khachhangs.findOne({
+      // await db.chitietves.destroy({
       //   where: {
-      //     id: ve.id_KH
+      //     id_ve: id_ve
       //   },
-      //   raw : false
       // });
+      // await db.chitietdoans.destroy({
+      //   where: {
+      //     id_ve: id_ve
+      //   },
+      // });
+      // await db.ves.destroy({
+      //   where: {
+      //     id: id_ve
+      //   },
+      // });
+      let khachhang = await db.khachhangs.findOne({
+        where: {
+          id: ve.id_KH
+        },
+        // raw : false
+      });
 
-      // emailService.sendEmail(khachhang.Email_KH, "Thông báo hủy vé xem phim ",
-      //   `<h1>Xin chào ${khachhang.Hten_KH}, </h1>
-      //   <h3>Vé của bạn đã được hủy. Tiền đã được hoàn về số tài khoản thanh toán khi đặt</h3>
+      emailService.sendEmail(khachhang.Email_KH, "Thông báo hủy vé xem phim ",
+        `<h1>Xin chào ${khachhang.Hten_KH}, </h1>
+        <h3>Vé của bạn đã được hủy. Tiền đã được hoàn về số tài khoản thanh toán khi đặt</h3>
 
-      //   `)
+        `)
     } else {
       resolve({
         errCode: 2,
@@ -2768,7 +2802,101 @@ let handleUpdateMatkhau = (data) => {
     }
   });
 };
+let handleKiemtrataikhoan = (email) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+
+      let khachhang = await db.khachhangs.findOne({
+        where: {
+          // Hten_KH: data.hten_KH,
+          Email_KH: email,
+          // Sdt_KH: data.sdt_KH,
+        },
+      });
+      let khachhang1 = await db.khachhangs.findOne({
+        where: {
+          // Hten_KH: data.hten_KH,
+          Email_KH: '?' + email,
+          // Sdt_KH: data.sdt_KH,
+        },
+      });
+      if (khachhang || khachhang1) {
+        resolve({
+          errCode: 1,
+          errMessage: "Email đã được dùng ở tài khoản khác",
+        });
+      } else {
+        bcrypt.hash(email, parseInt(process.env.BCRYPT_SALT_ROUND)).then((hashedEmail) => {
+          console.log(`${process.env.APP_URL}/verify?email=${email}&token=${hashedEmail}`);
+          emailService.sendEmail(email, "Verify Email", `<a href="${process.env.URL_REACT}/api/verify?email=${email}&token=${hashedEmail}"> Ấn vào đây để xác nhận email </a>`)
+        });
+        resolve({
+          errCode: 0,
+          errMessage: "okii",
+        });
+      }
+
+      resolve(e);
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
+let handleCapnhatTTCanhan = (data) => {
+
+  return new Promise(async (resovle, reject) => {
+    try {
+      if (
+
+        !data.id
+        // 0 === 1
+      ) {
+        resovle({
+          errCode: 1,
+          errMessage: "Missing parameter nv",
+        });
+      } else {
+
+        let khachhang = await db.khachhangs.findOne({
+          where: {
+            id: data.id
+          },
+          raw: false,
+        });
+        if (khachhang) {
+          khachhang.Hten_KH = data.hten_kh;
+          khachhang.Sdt_KH = data.sdt_kh;
+          khachhang.Email_KH = data.email_kh;
+          khachhang.Ngaysinh_KH = data.ngaysinh_kh;
+          // khachhang.Tuoi_KH = data.tuoi_kh;
+          khachhang.Diachi_KH = data.diachi_kh;
+          khachhang.Gioitinh_KH = data.gioitinh_kh;
+          khachhang.Cccd_KH = data.cccd_kh;
+          // khachhang.Mathethanhvien_KH = data.chucvu_kh;
+          // khachhang.Diemtichluy_KH= data.taikhoan_kh,
+          // khachhang.Matkhau_KH = data.matkhau_kh,
+
+          await khachhang.save();
+        } else {
+          resovle({
+            errCode: 1,
+            errMessage: "Cập nhật thông tin khách hàng KHÔNG thành thông",
+          });
+        }
+        resovle({
+          errCode: 0,
+          errMessage: "Cập nhật thông tin khách hàng thành thông",
+        });
+      }
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
 module.exports = {
+  handleCapnhatTTCanhan: handleCapnhatTTCanhan,
   handleDangnhap: handleDangnhap,
   handleDangky: handleDangky,
   handleDatve: handleDatve,
@@ -2837,6 +2965,9 @@ module.exports = {
   handleThongke_ngay: handleThongke_ngay,
   handleThongke_phim: handleThongke_phim,
   handleThongke_cumrap: handleThongke_cumrap,
+  handleThongke_thang: handleThongke_thang,
+  handleThongke_tuan: handleThongke_tuan,
+  handleKiemtrataikhoan: handleKiemtrataikhoan,
 
 
 };
