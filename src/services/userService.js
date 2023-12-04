@@ -1,11 +1,14 @@
 // import { getSpaceUntilMaxLength } from "@testing-library/user-event/dist/utils";
 import db from "../models/index";
 import emailService from "./emailService"
-// const { Op } = require("sequelize");
+const {
+  Op
+} = require("sequelize");
 // import bcrypt, { hash } from "bcryptjs"; //hashpassword
 const bcrypt = require('bcrypt');
 import userController from "../controller/userController";
 import dayjs from "dayjs"
+import chitietloaiphim from "../models/chitietloaiphim";
 var Sequelize = require('sequelize');
 
 // const salt = bcrypt.genSaltSync(10);
@@ -19,9 +22,17 @@ let handleDangnhap = (email, password) => {
         //compare password
         let khachhang = await db.khachhangs.findOne({
           //get duoc alldata user
-          attributes: ["Taikhoan_Kh", "Matkhau_KH"], //get data can thiet
+          attributes: ["Email_KH", "Matkhau_KH"], //get data can thiet
           where: {
             Email_KH: email
+          },
+          raw: true,
+        });
+        let nhanvien = await db.nhanviens.findOne({
+          //get duoc alldata user
+          attributes: ["Email_NV", "Matkhau_NV"], //get data can thiet
+          where: {
+            Email_NV: email
           },
           raw: true,
         });
@@ -35,7 +46,19 @@ let handleDangnhap = (email, password) => {
           }
         } else {
           userdata.errCode = 2;
-          userdata.message = "user khong ton tai";
+          userdata.message = "khach hang khong ton tai";
+        }
+        if (nhanvien) {
+          if (password === nhanvien.Matkhau_NV) {
+            userdata.errCode = 0;
+            userdata.message = "ok";
+          } else {
+            userdata.errCode = 1;
+            userdata.message = "sai password";
+          }
+        } else {
+          userdata.errCode = 2;
+          userdata.message = "Nhan vien khong ton tai";
         }
         resolve(userdata);
       } else {
@@ -881,14 +904,41 @@ let handleLayTTCTLoaiphim_idP = (id) => {
     try {
       let chitietloaiphim = "";
       if (id === "ALL") {
-        chitietloaiphim = await db.chitietloaiphims.findAll({});
+        chitietloaiphim = await db.chitietloaiphims.findAll({
+          include: [{
+            model: db.loaiphims,
+          }, ],
+          raw: true,
+          nest: true
+        });
       }
 
       if (id && id !== "ALL") {
+
+        // let tk_ngay = await db.ves.findAll({
+        //   attributes: [
+        //     'id',
+        //     // exclude: ['tongtien'],
+        //     [Sequelize.fn('SUM', Sequelize.col('Tongtien')), 'total_amount']
+
+        //   ],
+        //   include: [{
+        //     model: db.chieus,
+        //   }, ],
+        //   group: ['chieu.ngaychieu'],
+        //   raw: true,
+        //   nest: true
+        // });
+
         chitietloaiphim = await db.chitietloaiphims.findAll({
           where: {
             id_phim: id
           },
+          include: [{
+            model: db.loaiphims,
+          }, ],
+          raw: true,
+          nest: true
         });
       }
       resolve(chitietloaiphim);
@@ -1278,7 +1328,7 @@ let handleThemTTPhim = (data) => {
       if (
         !data.Tenphim ||
         !data.Dieukien ||
-        // !data.Poster ||
+        !data.Poster ||
         !data.Trailer ||
         !data.Dienvien ||
         !data.Ngonngu ||
@@ -1288,6 +1338,7 @@ let handleThemTTPhim = (data) => {
         !data.Thoiluong ||
         !data.Ngaychieu ||
         !data.Nsx ||
+        !data.arridLP ||
         !data.Trangthai
       ) {
         resovle({
@@ -1312,7 +1363,18 @@ let handleThemTTPhim = (data) => {
           nsx: data.Nsx,
           trangthai: data.Trangthai
         });
+        // console.log('pt',data.arridLP[0])
+        // console.log('length',data.arridLP.length)
 
+        let n_id = await db.phims.max('id'); // 40
+        for (let index1 = 0; index1 < data.arridLP.length; index1++) {
+          await db.chitietloaiphims.create({
+            id_phim: n_id,
+            id_loaiphim: data.arridLP[index1]
+          });
+          // console.log('asd',data.arridLP[index1])
+
+        }
         resovle({
           errCode: 0,
           errMessage: "Thêm thông tin phim thành công",
@@ -1347,6 +1409,7 @@ let handleSuaTTPhim = (data) => {
         !data.Ngaychieu ||
         !data.Nsx ||
         !data.Trangthai ||
+        !data.ArrCTLP ||
         !data.id
       ) {
         resovle({
@@ -1377,6 +1440,27 @@ let handleSuaTTPhim = (data) => {
           phim.trangthai = data.Trangthai;
 
           await phim.save();
+
+          let ctloaiphim = await db.chitietloaiphims.findAll({
+            where: {
+              id_phim: data.id
+            },
+            raw: false,
+          });
+          console.log("Ád",ctloaiphim)
+          if (ctloaiphim) {
+            await db.chitietloaiphims.destroy({
+              where: {
+                id_phim: data.id
+              },
+            });
+          }
+          for (let index1 = 0; index1 < data.ArrCTLP.length; index1++) {
+            await db.chitietloaiphims.create({
+              id_phim: data.id,
+              id_loaiphim:data.ArrCTLP[index1]
+            });
+          }
         } else {
           resovle({
             errCode: 1,
@@ -1401,7 +1485,12 @@ let handleXoaTTPhim = async (Id) => {
         id: Id
       },
     });
-
+    let ctloaiphim = await db.chitietloaiphims.findAll({
+      where: {
+        id_phim: Id
+      },
+      raw: false,
+    });
     if (!phim) {
       resolve({
         errCode: 2,
@@ -1414,6 +1503,13 @@ let handleXoaTTPhim = async (Id) => {
         id: Id
       },
     });
+    if(ctloaiphim){
+      await db.chitietloaiphims.destroy({
+        where: {
+          id_phim: Id
+        },
+      });
+    }
 
     resolve({
       errCode: 0,
@@ -2104,7 +2200,7 @@ let handleThemTTNhanvien = (data) => {
           Chucvu_NV: data.chucvu_nv,
           Email_NV: data.taikhoan_nv,
           Matkhau_NV: data.matkhau_nv,
-        }); 
+        });
 
         resovle({
           errCode: 0,
@@ -2162,10 +2258,10 @@ let handleSuaTTNhanvien = (data) => {
           nhanvien.Gioitinh_NV = data.gioitinh_nv;
           nhanvien.Cccd_NV = data.cccd_nv;
           nhanvien.Chucvu_NV = data.chucvu_nv;
-          nhanvien.Email_NV= data.taikhoan_nv,
-          nhanvien.Matkhau_NV= data.matkhau_nv,
+          nhanvien.Email_NV = data.taikhoan_nv,
+            nhanvien.Matkhau_NV = data.matkhau_nv,
 
-          await nhanvien.save();
+            await nhanvien.save();
         } else {
           resovle({
             errCode: 1,
@@ -2895,7 +2991,46 @@ let handleCapnhatTTCanhan = (data) => {
   });
 };
 
+let handleSearch = (keyword) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let timkiem = await db.phims.findAll({
+        where: {
+          [Op.or]: [{
+              tenphim: {
+                [Op.like]: `%${keyword}%`
+              }
+            },
+            {
+              dienvien: {
+                [Op.like]: `%${keyword}%`
+              }
+            },
+            {
+              daodien: {
+                [Op.like]: `%${keyword}%`
+              }
+            },
+            {
+              nsx: {
+                [Op.like]: `%${keyword}%`
+              }
+            },
+            // { dienvien: { [Op.like]: `%${keyword}%` } },
+            // { daodien: { [Op.like]: `%${keyword}%` } },
+          ],
+        },
+      });
+      resolve(timkiem);
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
+
 module.exports = {
+  handleSearch: handleSearch,
   handleCapnhatTTCanhan: handleCapnhatTTCanhan,
   handleDangnhap: handleDangnhap,
   handleDangky: handleDangky,

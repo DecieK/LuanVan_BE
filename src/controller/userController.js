@@ -1214,8 +1214,29 @@ let handleCapnhatTTCanhan = async (req, res) => {
     });
   }
 };
+let handleSearch = async (req, res) => {
+  let keyword = req.query.keyword;
+  // let sdtBN = req.body.sdtBN;
+
+  if (!keyword) {
+    return res.status(200).json({
+      errCode: 1,
+      errMessage: "missing require parameters",
+      timkiem: {},
+    });
+  }
+  let timkiem = await userService.handleSearch(keyword);
+
+  return res.status(200).json({
+    errCode: 0,
+    errMessage: "ok",
+    timkiem,
+  });
+};
+
 
 module.exports = {
+  handleSearch: handleSearch,
   handleCapnhatTTCanhan: handleCapnhatTTCanhan,
   handleKiemtrataikhoan: handleKiemtrataikhoan,
   handleDangnhap: handleDangnhap,

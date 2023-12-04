@@ -58,10 +58,11 @@ const initWebRoutes = (app) => {
   router.post("/api/ThemTTChieu", userController.handleThemTTChieu);
   router.post("/api/SuaTTChieu", userController.handleSuaTTChieu);
   router.delete("/api/XoaTTChieu", userController.handleXoaTTChieu);
+  // router.get("/api/LayTTCTLoaiphimLP_idP", userController.handleLayTTCTLoaiphimLP_idP);
 
 
   router.post("/api/ThemTTDoan", userController.handleThemTTDoan);
-  router.post("/api/SuaTTDoan", userController.handleSuaTTDoan);
+  router.post("/api/SuaTTDoan", userController.handleSuaTTDoan);``
   router.delete("/api/XoaTTDoan", userController.handleXoaTTDoan);
 
   router.get("/api/LayTTKhachhang", userController.handleLayTTKhachhang);
@@ -107,6 +108,8 @@ const initWebRoutes = (app) => {
 
 
   router.post("/api/CapnhatTTCanhan", userController.handleCapnhatTTCanhan);
+
+  router.get("/api/search", userController.handleSearch);
 
   // router.post("/api/VnPay", userController.handleVnPay);
 

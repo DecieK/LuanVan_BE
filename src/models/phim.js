@@ -31,10 +31,6 @@ module.exports = (sequelize, DataTypes) => {
     tomtat: DataTypes.STRING,
     nsx: DataTypes.STRING,
     trangthai: DataTypes.STRING,
-
-
-
-
   }, {
     sequelize,
     modelName: "phims",

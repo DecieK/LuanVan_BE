@@ -8,7 +8,11 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-
+      chitietloaiphims.belongsTo(models.loaiphims, {
+        foreignKey: "id_loaiphim",
+        // targetKey: "keyMap",
+        // as: "positionData",
+      });
     }
   }
   chitietloaiphims.init(
