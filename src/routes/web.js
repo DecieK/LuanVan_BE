@@ -111,6 +111,11 @@ const initWebRoutes = (app) => {
 
   router.get("/api/search", userController.handleSearch);
 
+
+  //binhluan
+  router.get("/api/Laybinhluan", userController.handleLaybinhluan);
+  router.post("/api/Thembinhluan", userController.handleThembinhluan);
+
   // router.post("/api/VnPay", userController.handleVnPay);
 
   return app.use("/", router);

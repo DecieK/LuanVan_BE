@@ -1234,8 +1234,43 @@ let handleSearch = async (req, res) => {
   });
 };
 
+let handleLaybinhluan = async (req, res) => {
+  let key = req.query.keyword;
+
+  if (!key) {
+    return res.status(200).json({
+      errCode: 1,
+      errMessage: "missing require parameters",
+      binhluans: {},
+    });
+  }
+
+  let binhluans = await userService.handleLaybinhluan(key);
+
+  return res.status(200).json({
+    errCode: 0,
+    errMessage: "ok",
+    binhluans,
+  });
+};
+
+
+let handleThembinhluan = async (req, res) => {
+  try {
+    let binhluan = await userService.handleThembinhluan(req.body);
+    return res.status(200).json(binhluan);
+  } catch (e) {
+    console.log(e);
+    return res.status(200).json({
+      errCode: -1,
+      errMessage: "Error from the server",
+    });
+  }
+};
 
 module.exports = {
+  handleThembinhluan: handleThembinhluan,
+  handleLaybinhluan: handleLaybinhluan,
   handleSearch: handleSearch,
   handleCapnhatTTCanhan: handleCapnhatTTCanhan,
   handleKiemtrataikhoan: handleKiemtrataikhoan,

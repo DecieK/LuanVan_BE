@@ -45,21 +45,20 @@ let handleDangnhap = (email, password) => {
             userdata.message = "sai password";
           }
         } else {
-          userdata.errCode = 2;
-          userdata.message = "khach hang khong ton tai";
-        }
-        if (nhanvien) {
-          if (password === nhanvien.Matkhau_NV) {
-            userdata.errCode = 0;
-            userdata.message = "ok";
+          if (nhanvien) {
+            if (password === nhanvien.Matkhau_NV) {
+              userdata.errCode = 0;
+              userdata.message = "ok";
+            } else {
+              userdata.errCode = 1;
+              userdata.message = "sai password";
+            }
           } else {
-            userdata.errCode = 1;
-            userdata.message = "sai password";
+            userdata.errCode = 2;
+            userdata.message = "Nhan vien khong ton tai";
           }
-        } else {
-          userdata.errCode = 2;
-          userdata.message = "Nhan vien khong ton tai";
         }
+
         resolve(userdata);
       } else {
         //return err
@@ -1447,7 +1446,7 @@ let handleSuaTTPhim = (data) => {
             },
             raw: false,
           });
-          console.log("Ád",ctloaiphim)
+          console.log("Ád", ctloaiphim)
           if (ctloaiphim) {
             await db.chitietloaiphims.destroy({
               where: {
@@ -1458,7 +1457,7 @@ let handleSuaTTPhim = (data) => {
           for (let index1 = 0; index1 < data.ArrCTLP.length; index1++) {
             await db.chitietloaiphims.create({
               id_phim: data.id,
-              id_loaiphim:data.ArrCTLP[index1]
+              id_loaiphim: data.ArrCTLP[index1]
             });
           }
         } else {
@@ -1503,7 +1502,7 @@ let handleXoaTTPhim = async (Id) => {
         id: Id
       },
     });
-    if(ctloaiphim){
+    if (ctloaiphim) {
       await db.chitietloaiphims.destroy({
         where: {
           id_phim: Id
@@ -2657,21 +2656,21 @@ let handleHuyVe = async (id_ve) => {
     });
 
     if (ve) {
-      // await db.chitietves.destroy({
-      //   where: {
-      //     id_ve: id_ve
-      //   },
-      // });
-      // await db.chitietdoans.destroy({
-      //   where: {
-      //     id_ve: id_ve
-      //   },
-      // });
-      // await db.ves.destroy({
-      //   where: {
-      //     id: id_ve
-      //   },
-      // });
+      await db.chitietves.destroy({
+        where: {
+          id_ve: id_ve
+        },
+      });
+      await db.chitietdoans.destroy({
+        where: {
+          id_ve: id_ve
+        },
+      });
+      await db.ves.destroy({
+        where: {
+          id: id_ve
+        },
+      });
       let khachhang = await db.khachhangs.findOne({
         where: {
           id: ve.id_KH
@@ -2995,6 +2994,10 @@ let handleSearch = (keyword) => {
   return new Promise(async (resolve, reject) => {
     try {
       let timkiem = await db.phims.findAll({
+        // include: [{
+        //   model: db.loaiphims,
+        // }, ],
+
         where: {
           [Op.or]: [{
               tenphim: {
@@ -3016,10 +3019,17 @@ let handleSearch = (keyword) => {
                 [Op.like]: `%${keyword}%`
               }
             },
+            // {
+            //   loai: {
+            //     [Op.like]: `%${keyword}%`
+            //   }
+            // },
             // { dienvien: { [Op.like]: `%${keyword}%` } },
             // { daodien: { [Op.like]: `%${keyword}%` } },
           ],
         },
+        raw: true,
+        nest: true
       });
       resolve(timkiem);
     } catch (e) {
@@ -3029,7 +3039,69 @@ let handleSearch = (keyword) => {
 };
 
 
+let handleLaybinhluan = (key) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let binhluan = "";
+      if (key === "ALL") {
+        binhluan = await db.danhgias.findAll({
+
+        });
+      }
+
+      if (key && key !== "ALL") {
+        binhluan = await db.danhgias.findAll({
+          where: {
+            id_phim: key
+          },
+        });
+      }
+      resolve(binhluan);
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
+
+let handleThembinhluan = (data) => {
+
+  return new Promise(async (resovle, reject) => {
+    try {
+      if (
+        !data.sosao ||
+        !data.noidung ||
+        !data.id_kh ||
+        !data.id_phim
+      ) {
+        resovle({
+          errCode: 1,
+          errMessage: "Missing parameter nv",
+        });
+      } else {
+
+        await db.danhgias.create({
+          noidung: data.noidung,
+          sosao: data.sosao,
+          id_KH: data.id_kh,
+          id_phim: data.id_phim,
+        });
+
+        resovle({
+          errCode: 0,
+          errMessage: "Cập nhật thông tin khách hàng thành thông",
+        });
+      }
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
+
 module.exports = {
+  handleThembinhluan: handleThembinhluan,
+  handleLaybinhluan: handleLaybinhluan,
   handleSearch: handleSearch,
   handleCapnhatTTCanhan: handleCapnhatTTCanhan,
   handleDangnhap: handleDangnhap,
