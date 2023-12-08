@@ -63,11 +63,12 @@ router.post('/create_payment_url', function (req, res, next) {
     let vnpUrl = 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html';
     // let vnpUrl = 'http://localhost:3000/';
     let returnUrl = `http://localhost:3000/thanhtoan/`;
-    let orderId = randomInt(0, 999);
+    let orderId = randomInt(0, 9999);
     // let amount = 1000 * 100;
     // let bankCode = 'NCB';
     let amount = req.body.amount;
-    let bankCode = req.body.bankCode;
+    // let bankCode = req.body.bankCode;
+    let bankCode = 'VNBANK';
 
     let locale = 'vn'
     if (locale === null || locale === '') {
@@ -82,7 +83,9 @@ router.post('/create_payment_url', function (req, res, next) {
     vnp_Params['vnp_CurrCode'] = currCode;
     vnp_Params['vnp_TxnRef'] = orderId;
     vnp_Params['vnp_OrderInfo'] = 'Thanh toan cho ve:' + orderId;
-    vnp_Params['vnp_OrderType'] = 'other';
+    // vnp_Params['vnp_OrderType'] = 'other';
+    vnp_Params['vnp_OrderType'] = 'billpayment';
+
     vnp_Params['vnp_Amount'] = amount * 100;
     vnp_Params['vnp_ReturnUrl'] = returnUrl;
     vnp_Params['vnp_IpAddr'] = ipAddr;

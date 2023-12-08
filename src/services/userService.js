@@ -246,8 +246,13 @@ let handleDatve = (data) => {
           where: {
             id: data.id_KH
           },
-          // raw : false
+          raw: false
         });
+        if (khachhang) {
+          khachhang.Diemtichluy_KH = khachhang.Diemtichluy_KH + ((data.tongtien * 1) / 100),
+
+            await khachhang.save();
+        }
         let cumrap = await db.qlcumraps.findOne({
           where: {
             id: data.id_cumrap
@@ -316,8 +321,8 @@ let handleDatve = (data) => {
           }
         }
 
-        console.log('danhsacnhDV', danhsacnhDV.length)
-        console.log('danhsacnhDV', data.id_doan.length)
+        // console.log('danhsacnhDV', danhsacnhDV.length)
+        // console.log('danhsacnhDV', data.id_doan.length)
 
         emailService.sendEmail(khachhang.Email_KH, "Thông báo đặt vé xem phim ",
           `<h1>Xin chào ${khachhang.Hten_KH}, </h1>
@@ -411,6 +416,17 @@ let handleCapnhatTTve = (data) => {
             },
           });
         }
+        let khachhang = await db.khachhangs.findOne({
+          where: {
+            id: data.id_KH
+          },
+          raw: false
+        });
+        if (khachhang && ve) {
+          khachhang.Diemtichluy_KH = khachhang.Diemtichluy_KH - (ve.Tongtien * 1) / 100
+
+          await khachhang.save();
+        }
         if (ve) {
           ve.Hten_KH = data.hten_KH,
             ve.HTTT = data.httt,
@@ -428,6 +444,8 @@ let handleCapnhatTTve = (data) => {
 
             await ve.save();
 
+          khachhang.Diemtichluy_KH = khachhang.Diemtichluy_KH + (data.tongtien * 1) / 100
+          await khachhang.save();
 
           for (let index1 = 0; index1 < data.soluongghe; index1++) {
             await db.chitietves.create({
@@ -446,12 +464,7 @@ let handleCapnhatTTve = (data) => {
             }
           }
 
-          let khachhang = await db.khachhangs.findOne({
-            where: {
-              id: data.id_KH
-            },
-            // raw : false
-          });
+
           let cumrap = await db.qlcumraps.findOne({
             where: {
               id: data.id_cumrap
@@ -1748,10 +1761,21 @@ let handleThemTTChieu = (data) => {
             ngaychieu: data.ngaychieu,
             id_rap: data.idr,
             id_suatchieu: data.idsc,
-            id_phim: data.idp
+            // id_phim: data.idp
           },
           raw: false,
         })
+        // if (ttchieu) {
+        //   let ttsc = await db.suatchieus.findOne({
+        //     where: {
+        //       ngaychieu: data.ngaychieu,
+        //       id_rap: data.idr,
+        //       id_suatchieu: data.idsc,
+        //       // id_phim: data.idpơ
+        //     },
+        //     raw: false,
+        //   })
+        // }
         console.log('ada', ttchieu)
 
         if (!ttchieu) {
@@ -2654,7 +2678,16 @@ let handleHuyVe = async (id_ve) => {
       },
       raw: false
     });
-
+    let khachhang = await db.khachhangs.findOne({
+      where: {
+        id: ve.id_KH
+      },
+      raw: false
+    });
+    if (khachhang) {
+      khachhang.Diemtichluy_KH = khachhang.Diemtichluy_KH - (ve.Tongtien * 1) / 100
+      await khachhang.save()
+    }
     if (ve) {
       await db.chitietves.destroy({
         where: {
@@ -2671,12 +2704,7 @@ let handleHuyVe = async (id_ve) => {
           id: id_ve
         },
       });
-      let khachhang = await db.khachhangs.findOne({
-        where: {
-          id: ve.id_KH
-        },
-        // raw : false
-      });
+
 
       emailService.sendEmail(khachhang.Email_KH, "Thông báo hủy vé xem phim ",
         `<h1>Xin chào ${khachhang.Hten_KH}, </h1>
